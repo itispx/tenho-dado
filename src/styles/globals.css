@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-app: #0a0a0a;
+    --bg-surface: #111111;
+    --bg-elevated: #1c1c1c;
+    --bg-overlay: rgba(0, 0, 0, 0.7);
+    --bg-hover: rgba(255, 255, 255, 0.04);
+    --bg-active: rgba(255, 255, 255, 0.08);
+
+    --text-primary: #f5f5f5;
+    --text-secondary: #a3a3a3;
+    --text-muted: #525252;
+    --text-disabled: #3d3d3d;
+
+    --color-danger: #ef4444;
+    --color-danger-bg: #1f0b0b;
+    --color-danger-muted: rgba(239, 68, 68, 0.15);
+    --color-danger-strong: #dc2626;
+
+    --color-victory: #fbbf24;
+    --color-victory-bg: #1c1200;
+    --color-victory-muted: rgba(251, 191, 36, 0.15);
+    --color-victory-bright: #fcd34d;
+
+    --color-success: #22c55e;
+    --color-success-bg: #071d0f;
+
+    --ink-950: #0a0a0a;
+    --ink-900: #111111;
+    --ink-800: #1c1c1c;
+    --ink-700: #2a2a2a;
+    --ink-600: #3d3d3d;
+    --ink-400: #737373;
+    --ink-200: #c4c4c4;
+    --ink-50: #f5f5f5;
+
+    --border-subtle: #1c1c1c;
+    --border-default: #2a2a2a;
+    --border-strong: #3d3d3d;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-pill: 9999px;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
+    --shadow-glow-red: 0 0 24px rgba(239, 68, 68, 0.25);
+    --shadow-glow-gold: 0 0 24px rgba(251, 191, 36, 0.25);
+
+    --font-display: "Bebas Neue", "Impact", sans-serif;
+    --font-body: "DM Sans", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+
+    --transition-fast: 120ms ease;
+    --transition-base: 220ms ease;
+    --transition-slow: 380ms ease;
+    --transition-spring: 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    --z-base: 0;
+    --z-raised: 10;
+    --z-sticky: 100;
+    --z-overlay: 200;
+    --z-modal: 300;
+    --z-toast: 400;
+  }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--bg-app);
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@keyframes dice-shake {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  20% {
+    transform: rotate(-8deg) scale(1.05);
+  }
+  40% {
+    transform: rotate(8deg) scale(1.08);
+  }
+  60% {
+    transform: rotate(-5deg) scale(1.05);
+  }
+  80% {
+    transform: rotate(5deg) scale(1.02);
+  }
+}
+
+@keyframes flash-red {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(239, 68, 68, 0.2);
+  }
+}
+
+@keyframes flash-gold {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(251, 191, 36, 0.2);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  70% {
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .animate-dice-shake {
+    animation: dice-shake 0.5s ease-in-out;
+  }
+  .animate-flash-red {
+    animation: flash-red 0.4s ease;
+  }
+  .animate-flash-gold {
+    animation: flash-gold 0.4s ease;
+  }
+  .animate-pop-in {
+    animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .animate-slide-up {
+    animation: slide-up 0.25s ease;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.2s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

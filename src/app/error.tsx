@@ -1,0 +1,32 @@
+"use client";
+
+import { useEffect } from "react";
+
+export interface ErrorPageProps {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
+function ErrorPage({ error, reset }: ErrorPageProps) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
+  return (
+    <main className="min-h-dvh bg-ink-950 flex flex-col items-center justify-center px-4 text-center gap-4">
+      <p className="text-7xl" aria-hidden="true">
+        💀
+      </p>
+      <h1 className="font-display text-4xl text-ink-50 tracking-wider uppercase">Algo deu errado</h1>
+      <p className="text-ink-400 text-sm max-w-xs">Ocorreu um erro inesperado. Tente novamente.</p>
+      <button
+        onClick={reset}
+        className="mt-4 h-11 px-6 rounded-xl bg-ink-50 text-ink-950 font-semibold text-sm inline-flex items-center transition-all duration-fast hover:bg-ink-200 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
+      >
+        Tentar novamente
+      </button>
+    </main>
+  );
+}
+
+export default ErrorPage;

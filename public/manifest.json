@@ -1,0 +1,13 @@
+{
+  "name": "Tenho Dado",
+  "short_name": "Tenho Dado",
+  "description": "Quem tira menos, paga o combinado.",
+  "start_url": "/game",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "/api/icons/192", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/api/icons/512", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+  ]
+}

@@ -1,7 +1,7 @@
 project_id = "tenho-dado"
 
 [api]
-enabled = false
+enabled = true
 port = 54321
 schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]

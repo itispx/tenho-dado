@@ -1,18 +1,59 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+  --color-ink-400: var(--ink-400);
+  --color-ink-200: var(--ink-200);
+  --color-ink-50: var(--ink-50);
+
+  --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
+  --color-danger-muted: var(--color-danger-muted);
+  --color-danger-strong: var(--color-danger-strong);
+
+  --color-victory: var(--color-victory);
+  --color-victory-bg: var(--color-victory-bg);
+  --color-victory-muted: var(--color-victory-muted);
+  --color-victory-bright: var(--color-victory-bright);
+
+  --color-ok: var(--color-success);
+  --color-ok-bg: var(--color-success-bg);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @layer base {
   :root {
     --bg-app: #0a0a0a;
     --bg-surface: #111111;
     --bg-elevated: #1c1c1c;
-    --bg-overlay: rgba(0, 0, 0, 0.7);
+    --bg-overlay: rgba(0, 0, 0, 0.72);
     --bg-hover: rgba(255, 255, 255, 0.04);
     --bg-active: rgba(255, 255, 255, 0.08);
 
     --text-primary: #f5f5f5;
-    --text-secondary: #a3a3a3;
-    --text-muted: #525252;
-    --text-disabled: #3d3d3d;
+    --text-secondary: #b4b4b4;
+    --text-muted: #8f8f8f;
+    --text-disabled: #5c5c5c;
 
     --color-danger: #ef4444;
     --color-danger-bg: #1f0b0b;
@@ -32,7 +73,9 @@
     --ink-800: #1c1c1c;
     --ink-700: #2a2a2a;
     --ink-600: #3d3d3d;
-    --ink-400: #737373;
+    /* 4.5:1 against ink-900 and ink-800 — the floor for small text. */
+    --ink-500: #808080;
+    --ink-400: #8f8f8f;
     --ink-200: #c4c4c4;
     --ink-50: #f5f5f5;
 
@@ -43,23 +86,19 @@
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-xl: 20px;
     --radius-pill: 9999px;
 
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
     --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
-    --shadow-glow-red: 0 0 24px rgba(239, 68, 68, 0.25);
-    --shadow-glow-gold: 0 0 24px rgba(251, 191, 36, 0.25);
 
-    --font-display: "Bebas Neue", "Impact", sans-serif;
-    --font-body: "DM Sans", system-ui, sans-serif;
+    /* --font-display e --font-body são definidas pelo next/font no <html>. */
     --font-mono: "JetBrains Mono", monospace;
 
     --transition-fast: 120ms ease;
     --transition-base: 220ms ease;
     --transition-slow: 380ms ease;
-    --transition-spring: 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
     --z-base: 0;
     --z-raised: 10;
@@ -83,6 +122,9 @@
     background-color: var(--bg-app);
     color: var(--text-primary);
     font-family: var(--font-body);
+    caret-color: var(--color-victory);
+    color-scheme: dark;
+    scrollbar-color: var(--ink-700) transparent;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -96,65 +138,71 @@
   * {
     -webkit-tap-highlight-color: transparent;
   }
-}
 
-@keyframes dice-shake {
-  0%,
-  100% {
-    transform: rotate(0deg) scale(1);
+  ::selection {
+    background-color: rgba(251, 191, 36, 0.28);
+    color: var(--ink-50);
   }
-  20% {
-    transform: rotate(-8deg) scale(1.05);
-  }
-  40% {
-    transform: rotate(8deg) scale(1.08);
-  }
-  60% {
-    transform: rotate(-5deg) scale(1.05);
-  }
-  80% {
-    transform: rotate(5deg) scale(1.02);
-  }
-}
 
-@keyframes flash-red {
-  0%,
-  100% {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
     background-color: transparent;
   }
-  50% {
-    background-color: rgba(239, 68, 68, 0.2);
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--ink-700);
+    border: 3px solid transparent;
+    border-radius: var(--radius-pill);
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--ink-600);
   }
 }
 
-@keyframes flash-gold {
-  0%,
-  100% {
-    background-color: transparent;
-  }
-  50% {
-    background-color: rgba(251, 191, 36, 0.2);
-  }
-}
-
-@keyframes pop-in {
+/* A queda do dado é o único momento de movimento autoral do app. O cubo gira
+   por Web Animations API (o ângulo final depende da face sorteada); o hop do
+   palco fica em JS, junto do cubo, para as duas coisas rodarem no mesmo relógio. */
+/* Entra, gargalha em três quiques e assenta. */
+@keyframes laugh {
   0% {
     opacity: 0;
-    transform: scale(0.85);
+    transform: translateY(-16px) scale(0.5) rotate(-14deg);
   }
-  70% {
-    transform: scale(1.04);
+  28% {
+    opacity: 1;
+    transform: translateY(0) scale(1.12) rotate(6deg);
+  }
+  40% {
+    transform: translateY(-4px) scale(1.04) rotate(-5deg);
+  }
+  52% {
+    transform: translateY(0) scale(0.97) rotate(4deg);
+  }
+  64% {
+    transform: translateY(-3px) scale(1.03) rotate(-3deg);
+  }
+  76% {
+    transform: translateY(0) scale(0.99) rotate(2deg);
+  }
+  88% {
+    transform: translateY(-1px) scale(1.01) rotate(-1deg);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1) rotate(0deg);
   }
 }
 
-@keyframes slide-up {
+@keyframes sheet-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -171,24 +219,29 @@
   }
 }
 
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @layer utilities {
-  .animate-dice-shake {
-    animation: dice-shake 0.5s ease-in-out;
+  .animate-laugh {
+    animation: laugh 1600ms var(--ease-out-quint) both;
   }
-  .animate-flash-red {
-    animation: flash-red 0.4s ease;
-  }
-  .animate-flash-gold {
-    animation: flash-gold 0.4s ease;
-  }
-  .animate-pop-in {
-    animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .animate-slide-up {
-    animation: slide-up 0.25s ease;
+  .animate-sheet-in {
+    animation: sheet-in 260ms var(--ease-out-quint) both;
   }
   .animate-fade-in {
-    animation: fade-in 0.2s ease;
+    animation: fade-in 180ms ease-out both;
+  }
+  .animate-pop-in {
+    animation: pop-in 260ms var(--ease-out-quint) both;
   }
 }
 

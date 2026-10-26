@@ -2,8 +2,14 @@
   "name": "tenho-dado",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.6.0",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "types:generate": "npx supabase gen types typescript --local > src/types/database.ts",
@@ -12,15 +18,9 @@
     "supabase:db:seed": "supabase db seed",
     "supabase:deploy": "supabase functions deploy",
     "lint": "eslint --fix",
+    "lint:ci": "eslint .",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
-  },
-  "dependencies": {
-    "@supabase/ssr": "^0.10.2",
-    "@supabase/supabase-js": "^2.102.1",
-    "clsx": "^2.1.1",
-    "next": "16.2.3",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -28,6 +28,17 @@
       "prettier --write"
     ],
     "*.{json,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.102.1",
+    "clsx": "^2.1.1",
+    "next": "16.2.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-hook-form": "^7.79.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -41,7 +52,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
-    "supabase": "^2.88.1",
+    "supabase": "^2.107.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

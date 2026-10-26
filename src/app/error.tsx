@@ -2,6 +2,9 @@
 
 import { useEffect } from "react";
 
+import Button from "@/components/ui/button/button";
+import DiceFace from "@/components/ui/dice-face/dice-face";
+
 export interface ErrorPageProps {
   error: Error & { digest?: string };
   reset: () => void;
@@ -13,18 +16,18 @@ function ErrorPage({ error, reset }: ErrorPageProps) {
   }, [error]);
 
   return (
-    <main className="min-h-dvh bg-ink-950 flex flex-col items-center justify-center px-4 text-center gap-4">
-      <p className="text-7xl" aria-hidden="true">
-        💀
-      </p>
-      <h1 className="font-display text-4xl text-ink-50 tracking-wider uppercase">Algo deu errado</h1>
-      <p className="text-ink-400 text-sm max-w-xs">Ocorreu um erro inesperado. Tente novamente.</p>
-      <button
-        onClick={reset}
-        className="mt-4 h-11 px-6 rounded-xl bg-ink-50 text-ink-950 font-semibold text-sm inline-flex items-center transition-all duration-fast hover:bg-ink-200 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
-      >
-        Tentar novamente
-      </button>
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-ink-950 px-4 text-center">
+      <DiceFace value={1} size="xl" tone="danger" decorative />
+
+      <h1 className="font-display text-4xl uppercase tracking-wider text-ink-50">Algo deu errado</h1>
+
+      <p className="max-w-xs text-sm text-ink-400">Ocorreu um erro inesperado. Tente novamente.</p>
+
+      <div className="mt-4">
+        <Button type="button" size="sm" onClick={reset}>
+          Tentar novamente
+        </Button>
+      </div>
     </main>
   );
 }

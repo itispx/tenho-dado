@@ -28,86 +28,57 @@ export type Database = {
   };
   public: {
     Tables: {
-      game: {
+      game_session: {
         Row: {
-          code: string;
           created_at: string;
-          creator_id: string;
-          current_round: number;
-          dice_mode: string;
           finished_at: string | null;
+          host_id: string;
           id: string;
-          max_rounds: number;
-          punishment: string | null;
+          invite_version: number;
+          loser_profile_id: string | null;
+          loser_spent: number | null;
+          mode: string;
+          source: string;
           started_at: string | null;
           status: string;
         };
         Insert: {
-          code: string;
           created_at?: string;
-          creator_id: string;
-          current_round?: number;
-          dice_mode?: string;
           finished_at?: string | null;
+          host_id: string;
           id?: string;
-          max_rounds?: number;
-          punishment?: string | null;
+          invite_version?: number;
+          loser_profile_id?: string | null;
+          loser_spent?: number | null;
+          mode: string;
+          source?: string;
           started_at?: string | null;
           status?: string;
         };
         Update: {
-          code?: string;
           created_at?: string;
-          creator_id?: string;
-          current_round?: number;
-          dice_mode?: string;
           finished_at?: string | null;
+          host_id?: string;
           id?: string;
-          max_rounds?: number;
-          punishment?: string | null;
+          invite_version?: number;
+          loser_profile_id?: string | null;
+          loser_spent?: number | null;
+          mode?: string;
+          source?: string;
           started_at?: string | null;
           status?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "game_creator_id_fkey";
-            columns: ["creator_id"];
+            foreignKeyName: "game_session_host_id_fkey";
+            columns: ["host_id"];
             isOneToOne: false;
             referencedRelation: "profile";
             referencedColumns: ["id"];
           },
-        ];
-      };
-      game_player: {
-        Row: {
-          game_id: string;
-          id: string;
-          joined_at: string;
-          player_id: string;
-        };
-        Insert: {
-          game_id: string;
-          id?: string;
-          joined_at?: string;
-          player_id: string;
-        };
-        Update: {
-          game_id?: string;
-          id?: string;
-          joined_at?: string;
-          player_id?: string;
-        };
-        Relationships: [
           {
-            foreignKeyName: "game_player_game_id_fkey";
-            columns: ["game_id"];
-            isOneToOne: false;
-            referencedRelation: "game";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "game_player_player_id_fkey";
-            columns: ["player_id"];
+            foreignKeyName: "game_session_loser_profile_id_fkey";
+            columns: ["loser_profile_id"];
             isOneToOne: false;
             referencedRelation: "profile";
             referencedColumns: ["id"];
@@ -117,68 +88,115 @@ export type Database = {
       profile: {
         Row: {
           created_at: string;
-          critical_failure: number;
-          critical_success: number;
           id: string;
+          is_managed: boolean;
+          managed_by: string | null;
           username: string;
         };
         Insert: {
           created_at?: string;
-          critical_failure?: number;
-          critical_success?: number;
           id: string;
+          is_managed?: boolean;
+          managed_by?: string | null;
           username: string;
         };
         Update: {
           created_at?: string;
-          critical_failure?: number;
-          critical_success?: number;
           id?: string;
+          is_managed?: boolean;
+          managed_by?: string | null;
           username?: string;
-        };
-        Relationships: [];
-      };
-      round: {
-        Row: {
-          game_id: string;
-          id: string;
-          player_id: string;
-          rolled_value: number | null;
-          round_number: number;
-          status: string;
-          submitted_at: string;
-        };
-        Insert: {
-          game_id: string;
-          id?: string;
-          player_id: string;
-          rolled_value?: number | null;
-          round_number: number;
-          status?: string;
-          submitted_at?: string;
-        };
-        Update: {
-          game_id?: string;
-          id?: string;
-          player_id?: string;
-          rolled_value?: number | null;
-          round_number?: number;
-          status?: string;
-          submitted_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "round_game_id_fkey";
-            columns: ["game_id"];
+            foreignKeyName: "profile_managed_by_fkey";
+            columns: ["managed_by"];
             isOneToOne: false;
-            referencedRelation: "game";
+            referencedRelation: "profile";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      session_player: {
+        Row: {
+          added_by: string | null;
+          id: string;
+          joined_at: string;
+          profile_id: string;
+          session_id: string;
+          turn_order: number | null;
+        };
+        Insert: {
+          added_by?: string | null;
+          id?: string;
+          joined_at?: string;
+          profile_id: string;
+          session_id: string;
+          turn_order?: number | null;
+        };
+        Update: {
+          added_by?: string | null;
+          id?: string;
+          joined_at?: string;
+          profile_id?: string;
+          session_id?: string;
+          turn_order?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "session_player_added_by_fkey";
+            columns: ["added_by"];
+            isOneToOne: false;
+            referencedRelation: "profile";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "round_player_id_fkey";
-            columns: ["player_id"];
+            foreignKeyName: "session_player_profile_id_fkey";
+            columns: ["profile_id"];
             isOneToOne: false;
             referencedRelation: "profile";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "session_player_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "game_session";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      session_roll: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_tiebreak: boolean;
+          round: number;
+          session_player_id: string;
+          value: number;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_tiebreak?: boolean;
+          round: number;
+          session_player_id: string;
+          value: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_tiebreak?: boolean;
+          round?: number;
+          session_player_id?: string;
+          value?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "session_roll_session_player_id_fkey";
+            columns: ["session_player_id"];
+            isOneToOne: false;
+            referencedRelation: "session_player";
             referencedColumns: ["id"];
           },
         ];
@@ -188,7 +206,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      generate_lobby_code: { Args: never; Returns: string };
+      [_ in never]: never;
     };
     Enums: {
       [_ in never]: never;

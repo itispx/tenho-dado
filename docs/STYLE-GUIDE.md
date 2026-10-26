@@ -18,8 +18,9 @@ Neutros (base escura)
   --color-ink-900   #111111
   --color-ink-800   #1c1c1c
   --color-ink-700   #2a2a2a
-  --color-ink-600   #3d3d3d
-  --color-ink-400   #737373
+  --color-ink-600   #3d3d3d   (apenas bordas)
+  --color-ink-500   #808080   (texto secundário — 4.8:1 em ink-900)
+  --color-ink-400   #8f8f8f   (texto secundário — 5.9:1 em ink-900)
   --color-ink-200   #c4c4c4
   --color-ink-50    #f5f5f5
 
@@ -63,9 +64,9 @@ Declare em `src/styles/globals.css`. São usados via `var(--token)` e mapeados n
 
     /* ── Texto ── */
     --text-primary: #f5f5f5;
-    --text-secondary: #a3a3a3;
-    --text-muted: #525252;
-    --text-disabled: #3d3d3d;
+    --text-secondary: #b4b4b4;
+    --text-muted: #8f8f8f;
+    --text-disabled: #5c5c5c;
 
     /* ── Semânticas ── */
     --color-danger: #ef4444;
@@ -88,15 +89,14 @@ Declare em `src/styles/globals.css`. São usados via `var(--token)` e mapeados n
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-xl: 20px;
     --radius-pill: 9999px;
 
     /* ── Sombras ── */
+    /* Elevação é declarada uma vez: borda OU sombra, nunca as duas. */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
     --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
-    --shadow-glow-red: 0 0 24px rgba(239, 68, 68, 0.25);
-    --shadow-glow-gold: 0 0 24px rgba(251, 191, 36, 0.25);
 
     /* ── Tipografia ── */
     --font-display: "Bebas Neue", "Impact", sans-serif;
@@ -124,73 +124,52 @@ Declare em `src/styles/globals.css`. São usados via `var(--token)` e mapeados n
 
 ## Configuração Tailwind
 
-```ts
-// tailwind.config.ts
-import type { Config } from "tailwindcss";
+Tailwind v4 não usa `tailwind.config.ts`: o tema é declarado em `src/styles/globals.css`
+com `@theme inline`, apontando para as custom properties do `:root`.
 
-const config: Config = {
-  content: ["./src/**/*.{ts,tsx}"],
-  theme: {
-    extend: {
-      colors: {
-        ink: {
-          950: "#0a0a0a",
-          900: "#111111",
-          800: "#1c1c1c",
-          700: "#2a2a2a",
-          600: "#3d3d3d",
-          400: "#737373",
-          200: "#c4c4c4",
-          50: "#f5f5f5",
-        },
-        danger: {
-          DEFAULT: "#ef4444",
-          muted: "rgba(239,68,68,0.15)",
-          bg: "#1f0b0b",
-          strong: "#dc2626",
-        },
-        victory: {
-          DEFAULT: "#fbbf24",
-          muted: "rgba(251,191,36,0.15)",
-          bg: "#1c1200",
-          bright: "#fcd34d",
-        },
-        ok: {
-          DEFAULT: "#22c55e",
-          bg: "#071d0f",
-        },
-      },
-      fontFamily: {
-        display: ["var(--font-display)"],
-        body: ["var(--font-body)"],
-        mono: ["var(--font-mono)"],
-      },
-      borderRadius: {
-        sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
-        lg: "var(--radius-lg)",
-        xl: "var(--radius-xl)",
-        pill: "var(--radius-pill)",
-      },
-      boxShadow: {
-        sm: "var(--shadow-sm)",
-        md: "var(--shadow-md)",
-        lg: "var(--shadow-lg)",
-        "glow-red": "var(--shadow-glow-red)",
-        "glow-gold": "var(--shadow-glow-gold)",
-      },
-      transitionDuration: {
-        fast: "120",
-        base: "220",
-        slow: "380",
-      },
-    },
-  },
-  plugins: [],
-};
+```css
+/* src/styles/globals.css */
+@import "tailwindcss";
 
-export default config;
+@theme inline {
+  /* cores */
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+  --color-ink-400: var(--ink-400);
+  --color-ink-200: var(--ink-200);
+  --color-ink-50: var(--ink-50);
+
+  /* semânticas */
+  --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
+  --color-danger-muted: var(--color-danger-muted);
+  --color-victory: var(--color-victory);
+  --color-victory-bg: var(--color-victory-bg);
+  --color-victory-muted: var(--color-victory-muted);
+  --color-ok: var(--color-success);
+  --color-ok-bg: var(--color-success-bg);
+
+  /* tipografia, raios, sombras */
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+  --shadow-md: var(--shadow-md);
+
+  /* easing autoral — nada de bounce/elastic */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
 ```
+
+> **Atenção:** uma classe cujo token não existe (`text-ink-500` sem `--color-ink-500`)
+> não gera CSS e falha em silêncio. Ao usar um tom novo, declare-o no `@theme`.
+
+Duração de transição usa a escala padrão do Tailwind (`duration-150`, `duration-200`),
+não nomes inventados.
 
 ---
 
@@ -271,78 +250,27 @@ src/
 
 ## Estrutura do Componente
 
-```tsx
-// components/ui/button/button.tsx
-import clsx from "clsx";
+A referência é o componente real em `src/components/ui/button/button.tsx`.
 
-type Variant = "primary" | "danger" | "ghost" | "outline";
-type Size = "sm" | "md" | "lg";
+```tsx
+type ButtonVariant = "solid" | "outline" | "ghost" | "danger";
+type ButtonSize = "sm" | "md";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: Variant;
-  size?: Size;
   isLoading?: boolean;
-  children: React.ReactNode;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  fullWidth?: boolean;
+  loadingLabel?: string;
 }
-
-// Classes reutilizáveis extraídas para evitar strings enormes inline
-const variantClasses: Record<Variant, string> = {
-  primary: "bg-ink-50 text-ink-950 hover:bg-ink-200 active:scale-[0.97]",
-  danger: "bg-danger text-ink-50 hover:bg-danger-strong active:scale-[0.97] shadow-glow-red",
-  ghost: "bg-transparent text-ink-200 hover:bg-ink-800",
-  outline: "border border-ink-700 text-ink-200 hover:border-ink-400 hover:text-ink-50",
-};
-
-const sizeClasses: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm rounded-md",
-  md: "h-11 px-5 text-base rounded-lg",
-  lg: "h-14 px-7 text-lg rounded-xl",
-};
-
-function Button({
-  variant = "primary",
-  size = "md",
-  isLoading = false,
-  disabled,
-  className,
-  children,
-  ...props
-}: ButtonProps) {
-  const isDisabled = disabled || isLoading;
-
-  return (
-    <button
-      className={clsx(
-        "inline-flex items-center justify-center font-body font-semibold",
-        "transition-all duration-fast select-none",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
-        variantClasses[variant],
-        sizeClasses[size],
-        isDisabled && "opacity-40 pointer-events-none",
-        className,
-      )}
-      disabled={isDisabled}
-      aria-disabled={isDisabled}
-      aria-busy={isLoading}
-      {...props}
-    >
-      {isLoading ? (
-        <span className="flex items-center gap-2">
-          <span
-            className="size-4 rounded-full border-2 border-current border-t-transparent animate-spin"
-            aria-hidden="true"
-          />
-          Carregando...
-        </span>
-      ) : (
-        children
-      )}
-    </button>
-  );
-}
-
-export default Button;
 ```
+
+- `solid` é a ação principal (fundo `ink-50`, texto `ink-950`), `outline` a secundária,
+  `ghost` a terciária e `danger` a destrutiva (texto vermelho, sem fundo).
+- `size="sm"` (`h-9`) para ações inline, `size="md"` (`h-12`) para a ação da tela.
+- `fullWidth` é `true` por padrão; use `fullWidth={false}` em ações inline.
+- `loadingLabel` nomeia o que está acontecendo (`"Rolando…"`) em vez do genérico
+  "Carregando...".
 
 ### Regras de Componente
 
@@ -350,6 +278,32 @@ export default Button;
 - `className` aceitável em primitivos `ui/` para extensibilidade, proibido em `features/`
 - Usar `clsx` para toda composição de classes — nunca template literals manuais
 - Funções declaradas com `function Component` em vez de `const Component: React.FC`
+
+### Primitivos disponíveis
+
+| Componente     | Arquivo                              | Uso                                                       |
+| -------------- | ------------------------------------ | --------------------------------------------------------- |
+| `Button`       | `ui/button/button.tsx`               | toda ação clicável com texto                              |
+| `Card`         | `ui/card/card.tsx`                   | superfície de seção (`as`, `tone`)                        |
+| `Badge`        | `ui/badge/badge.tsx`                 | rótulo de estado (`neutral`, `victory`, `danger`, `ok`)   |
+| `Input`        | `ui/input/input.tsx`                 | campo com label, erro e olho de senha                     |
+| `Select`       | `ui/select/select.tsx`               | select nativo com chevron desenhado                       |
+| `Modal`        | `ui/modal/modal.tsx`                 | overlay com Escape, clique fora, scroll lock e foco preso |
+| `DiceFace`     | `ui/dice-face/dice-face.tsx`         | todo dado da interface                                    |
+| `ErrorMessage` | `ui/error-message/error-message.tsx` | erro de ação                                              |
+| `Title`        | `ui/title/title.tsx`                 | cabeçalho das telas de autenticação                       |
+
+Regras que valem para todos:
+
+- **Nada de emoji ou glifo Unicode como ícone.** O dado é o `DiceFace` (pintas em CSS);
+  ícones são SVG desenhado, no mesmo traço de 2px.
+- **Nunca aninhe cards.** Se um card precisa de cards dentro, a hierarquia está errada:
+  use linhas separadas por borda de 1px.
+- **Elevação declarada uma vez:** borda ou sombra. Não use as duas no mesmo elemento.
+- **Foco sempre visível**, com `focus-visible:ring-2 ring-victory` e offset `ink-950`.
+- Ações destrutivas passam por confirmação inline (`Cancelar` + `Confirmar`), não por
+  `confirm()`.
+- Estruturas repetidas (modal, select, badge) usam o primitivo; nunca copie o markup.
 
 ```tsx
 // ❌ Evitar
@@ -392,62 +346,47 @@ const statusClasses: Record<RoundStatus, string> = {
 
 ### 3. Animações customizadas
 
-Defina no `globals.css` via `@keyframes` e referencie como classes Tailwind:
+Existe **um** momento autoral de movimento: a queda do dado. O resto é transição de
+cor e um slide curto para modais. Defina no `globals.css` e use como utility:
 
 ```css
 /* globals.css */
-@keyframes dice-shake {
-  0%,
+@keyframes dice-roll {
+  0% {
+    transform: rotate(-14deg) scale(0.94);
+  }
+  35% {
+    transform: rotate(11deg) scale(1.06);
+  }
+  65% {
+    transform: rotate(-6deg) scale(1.02);
+  }
   100% {
     transform: rotate(0deg) scale(1);
   }
-  20% {
-    transform: rotate(-8deg) scale(1.05);
-  }
-  40% {
-    transform: rotate(8deg) scale(1.08);
-  }
-  60% {
-    transform: rotate(-5deg) scale(1.05);
-  }
-  80% {
-    transform: rotate(5deg) scale(1.02);
-  }
 }
 
-@keyframes flash-red {
-  0%,
-  100% {
-    background-color: transparent;
+@layer utilities {
+  .animate-dice-roll {
+    animation: dice-roll 520ms var(--ease-out-quint) both;
   }
-  50% {
-    background-color: rgba(239, 68, 68, 0.2);
+  .animate-sheet-in {
+    animation: sheet-in 260ms var(--ease-out-quint) both;
   }
-}
-
-@keyframes pop-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-  70% {
-    transform: scale(1.04);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
+  .animate-fade-in {
+    animation: fade-in 180ms ease-out both;
   }
 }
 ```
 
-```ts
-// tailwind.config.ts → theme.extend.animation
-animation: {
-  "dice-shake": "dice-shake 0.5s ease-in-out",
-  "flash-red":  "flash-red 0.4s ease",
-  "pop-in":     "pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-}
-```
+Regras:
+
+- **Nada de bounce ou elastic.** `cubic-bezier` com overshoot (0.34, 1.56, ...) envelhece
+  a interface; use `--ease-out-quint`.
+- Não invente uma entrada para cada seção — uma animação por tela, no máximo.
+- `prefers-reduced-motion` já é respeitado globalmente; não duplique a regra.
+- Durante a rolagem, o dado troca de face a cada 70ms e mostra a quinta face ao assentar.
+  O resultado real chega do servidor, nunca é inventado no cliente.
 
 ---
 
@@ -680,94 +619,37 @@ function Badge({ variant = "neutral", children, className }: BadgeProps) {
 export default Badge;
 ```
 
-### Componente Feature — PlayerScoreCard
+### Componente Feature — linha de placar
+
+A referência é `src/components/features/session/player-score.tsx`.
+
+Regras que a linha de placar segue:
+
+- **Sem card.** A linha é uma `<article>` com `border-b border-ink-800`; a lista inteira
+  forma a tabela. Card dentro de card é proibido.
+- **Um único sinal por estado.** Jogador da vez recebe `bg-victory-bg/50`; o perdedor
+  recebe `bg-danger-bg/60` e o total em `text-danger`. Nunca borda + glow ao mesmo tempo.
+- **Os dados são `DiceFace`**, nunca glifos `⚀`–`⚅` nem emoji. O tom (`neutral`,
+  `victory`, `danger`) comunica o estado, não o valor da face.
+- **Totais em `tabular-nums`** para as colunas não dançarem a cada rodada.
+- Nome e metadados em duas linhas (`@usuario` + `criador · você · gerido`), com
+  `truncate` para aguentar username longo em 390px.
 
 ```tsx
-// components/features/player-score-card/player-score-card.tsx
-import clsx from "clsx";
-import Badge from "@/components/ui/badge/badge";
-import type { Player, DiceRoll } from "@/types/game";
+<article className="flex items-center gap-3 border-b border-ink-800 px-1 py-2.5 last:border-b-0">
+  <div className="min-w-0 flex-1">
+    <p className="truncate text-sm font-semibold text-ink-50">@{score.player.username}</p>
+    <p className="truncate text-[11px] text-ink-400">{meta}</p>
+  </div>
 
-export interface PlayerScoreCardProps {
-  player: Player;
-  roll?: DiceRoll;
-  isLoser?: boolean;
-  isWinner?: boolean;
-}
+  <div className="flex items-center gap-1.5">
+    {[1, 2, 3].map((round) => (
+      <DiceFace key={round} value={valueFor(round)} size="sm" tone={isLoser ? "danger" : "neutral"} />
+    ))}
+  </div>
 
-function PlayerScoreCard({ player, roll, isLoser = false, isWinner = false }: PlayerScoreCardProps) {
-  return (
-    <article
-      className={clsx(
-        "rounded-xl border p-4 transition-all duration-base",
-        "bg-ink-900",
-        isLoser && "border-danger shadow-glow-red animate-flash-red",
-        isWinner && "border-victory shadow-glow-gold",
-        !isLoser && !isWinner && "border-ink-800",
-      )}
-      aria-label={`Jogador ${player.name}`}
-    >
-      {/* Cabeçalho */}
-      <header className="flex items-center justify-between mb-3">
-        <h3 className="font-body font-semibold text-ink-50 truncate">{player.name}</h3>
-        <div className="flex items-center gap-1.5">
-          {player.lives > 0 && (
-            <Badge variant="victory" aria-label={`${player.lives} vidas`}>
-              ❤️ {player.lives}
-            </Badge>
-          )}
-          {player.extraDays > 0 && (
-            <Badge variant="danger" aria-label={`${player.extraDays} dias extras`}>
-              💀 {player.extraDays}d
-            </Badge>
-          )}
-        </div>
-      </header>
-
-      {/* Dados */}
-      {roll ? (
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2 justify-center" aria-label="Resultados dos dados">
-            {roll.values.map((value, index) => (
-              <span
-                key={index}
-                className={clsx(
-                  "size-10 flex items-center justify-center rounded-md",
-                  "font-display text-xl border",
-                  value === 6 && "bg-victory-bg border-victory text-victory",
-                  value === 1 && "bg-danger-bg border-danger text-danger",
-                  value > 1 && value < 6 && "bg-ink-800 border-ink-700 text-ink-50",
-                )}
-                aria-label={`Dado ${index + 1}: ${value}`}
-              >
-                {value}
-              </span>
-            ))}
-          </div>
-
-          <p className="text-center font-display text-3xl text-ink-50">{roll.total}</p>
-
-          {roll.critical === "critical-hit" && (
-            <Badge variant="victory" className="mx-auto">
-              🏆 Acerto Crítico!
-            </Badge>
-          )}
-          {roll.critical === "critical-miss" && (
-            <Badge variant="danger" className="mx-auto">
-              💀 Erro Crítico!
-            </Badge>
-          )}
-        </div>
-      ) : (
-        <div className="h-16 flex items-center justify-center">
-          <p className="text-ink-400 text-sm font-body">Aguardando rolagem…</p>
-        </div>
-      )}
-    </article>
-  );
-}
-
-export default PlayerScoreCard;
+  <p className="w-7 text-right font-display text-2xl tabular-nums">{score.total}</p>
+</article>
 ```
 
 ---

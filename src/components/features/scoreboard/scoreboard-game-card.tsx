@@ -65,14 +65,16 @@ function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: Scoreboar
           {session.source === "retroactive" && <Badge variant="victory">Retroativo</Badge>}
         </div>
 
-        <div className="mt-2 flex items-start justify-between gap-3">
-          {loser ? (
-            <p className="min-w-0 text-[15px] font-semibold leading-snug text-ink-200">
-              <span className="break-words text-danger">@{loser.player.username}</span> perdeu
-            </p>
-          ) : (
-            <p className="text-[15px] font-semibold leading-snug text-ink-200">Partida encerrada</p>
-          )}
+        <div className="mt-2 flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+          <h2 className="min-w-[8rem] flex-1 text-[0.9375rem] font-semibold leading-snug text-ink-200">
+            {loser ? (
+              <>
+                <span className="break-words text-danger">@{loser.player.username}</span> perdeu
+              </>
+            ) : (
+              "Partida encerrada"
+            )}
+          </h2>
 
           <div className="shrink-0 text-right">
             {session.loser_spent !== null ? (
@@ -89,7 +91,7 @@ function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: Scoreboar
         </div>
       </header>
 
-      <section aria-label="Placar dos jogadores" className="mt-3 border-t border-ink-800 px-3 py-1">
+      <div className="mt-3 border-t border-ink-800 px-3 py-1">
         {scores.map((score) => (
           <PlayerScoreCard
             key={score.player.id}
@@ -97,7 +99,7 @@ function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: Scoreboar
             isLoser={score.player.profile_id === session.loser_profile_id}
           />
         ))}
-      </section>
+      </div>
 
       {canManage && (
         <footer className="mt-1 border-t border-ink-800 px-4 py-2">

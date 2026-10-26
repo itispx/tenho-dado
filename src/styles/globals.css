@@ -26,7 +26,6 @@
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);
-  --font-mono: var(--font-mono);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -34,26 +33,15 @@
   --radius-xl: var(--radius-xl);
   --radius-pill: var(--radius-pill);
 
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
   :root {
     --bg-app: #0a0a0a;
-    --bg-surface: #111111;
-    --bg-elevated: #1c1c1c;
     --bg-overlay: rgba(0, 0, 0, 0.72);
-    --bg-hover: rgba(255, 255, 255, 0.04);
-    --bg-active: rgba(255, 255, 255, 0.08);
 
     --text-primary: #f5f5f5;
-    --text-secondary: #b4b4b4;
-    --text-muted: #8f8f8f;
-    --text-disabled: #5c5c5c;
 
     --color-danger: #ef4444;
     --color-danger-bg: #1f0b0b;
@@ -79,33 +67,15 @@
     --ink-200: #c4c4c4;
     --ink-50: #f5f5f5;
 
-    --border-subtle: #1c1c1c;
-    --border-default: #2a2a2a;
-    --border-strong: #3d3d3d;
-
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
     --radius-xl: 20px;
     --radius-pill: 9999px;
 
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
-    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
-
     /* --font-display e --font-body são definidas pelo next/font no <html>. */
-    --font-mono: "JetBrains Mono", monospace;
 
-    --transition-fast: 120ms ease;
-    --transition-base: 220ms ease;
-    --transition-slow: 380ms ease;
-
-    --z-base: 0;
-    --z-raised: 10;
-    --z-sticky: 100;
-    --z-overlay: 200;
     --z-modal: 300;
-    --z-toast: 400;
   }
 }
 
@@ -246,11 +216,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .animate-laugh,
+  .animate-pop-in,
+  .animate-sheet-in {
+    animation: none;
+  }
+
+  .animate-fade-in {
+    animation-duration: 120ms;
   }
 }

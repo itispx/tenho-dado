@@ -313,7 +313,7 @@ function ScoreboardEntryForm({ session, profiles, onClose, onSaved }: Scoreboard
                 <div key={profileId} className="rounded-md border border-ink-800 bg-ink-950/40 p-3">
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate text-sm text-ink-200">{profileLabel(profileId)}</span>
-                    <span className="font-display text-2xl leading-none tabular-nums text-ink-50">{total ?? "—"}</span>
+                    <span className="text-xl font-semibold leading-none tabular-nums text-ink-50">{total ?? "—"}</span>
                   </div>
 
                   <div className="mt-2 flex items-center gap-2">

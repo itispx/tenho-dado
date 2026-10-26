@@ -10,7 +10,11 @@ import Input from "@/components/ui/input/input";
 
 const initialState: AuthFormState = { error: null };
 
-function RegisterForm() {
+export interface RegisterFormProps {
+  requiresInvite: boolean;
+}
+
+function RegisterForm({ requiresInvite }: RegisterFormProps) {
   const [state, formAction, isPending] = useActionState(registerFormAction, initialState);
 
   return (
@@ -26,6 +30,8 @@ function RegisterForm() {
           autoCapitalize="none"
           spellCheck={false}
           maxLength={20}
+          aria-describedby={state.error ? "register-error" : undefined}
+          aria-invalid={Boolean(state.error)}
           required
         />
 
@@ -36,10 +42,29 @@ function RegisterForm() {
           type="password"
           placeholder="Mínimo 8 caracteres"
           autoComplete="new-password"
+          aria-describedby={state.error ? "register-error" : undefined}
+          aria-invalid={Boolean(state.error)}
           required
         />
 
-        <ErrorMessage message={state.error} />
+        {requiresInvite && (
+          <Input
+            id="register-invite"
+            label="Código de convite"
+            name="inviteCode"
+            type="text"
+            placeholder="Código do grupo"
+            autoComplete="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            maxLength={100}
+            aria-describedby={state.error ? "register-error" : undefined}
+            aria-invalid={Boolean(state.error)}
+            required
+          />
+        )}
+
+        <ErrorMessage id="register-error" message={state.error} />
 
         <Button isLoading={isPending} loadingLabel="Criando conta…">
           Criar conta

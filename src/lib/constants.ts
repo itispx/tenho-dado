@@ -8,3 +8,5 @@ export const SESSION_MODE_LABELS = {
 export const INVITE_DISMISSED_STORAGE_KEY = "tenho-dado:invite-dismissed";
 
 export const SCOREBOARD_ADMIN_USERNAME = "itspx";
+
+export const SCOREBOARD_PAGE_SIZE = 10;

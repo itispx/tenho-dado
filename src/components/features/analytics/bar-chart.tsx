@@ -16,7 +16,7 @@ function BarChart({ title, items, variant, emptyText }: BarChartProps) {
   return (
     <Card as="section" aria-label={title}>
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-[15px] font-semibold text-ink-50">{title}</h2>
+        <h2 className="text-[0.9375rem] font-semibold text-ink-50">{title}</h2>
         {items.length > 0 && (
           <p className="text-xs text-ink-400">
             {items.length} {items.length === 1 ? "jogador" : "jogadores"}
@@ -25,11 +25,11 @@ function BarChart({ title, items, variant, emptyText }: BarChartProps) {
       </div>
 
       {items.length === 0 ? (
-        <p className="mt-3 text-[13px] text-ink-400">{emptyText}</p>
+        <p className="mt-3 text-[0.8125rem] text-ink-400">{emptyText}</p>
       ) : (
         <ol className="mt-3 flex flex-col gap-3.5">
           {items.map((item, index) => {
-            const percent = max > 0 ? (item.value / max) * 100 : 0;
+            const scale = max > 0 && item.value > 0 ? Math.max(item.value / max, 0.02) : 0;
 
             return (
               <li key={item.id}>
@@ -44,10 +44,10 @@ function BarChart({ title, items, variant, emptyText }: BarChartProps) {
                 <div className="ml-7 mt-1.5 h-2 overflow-hidden rounded-pill bg-ink-800" aria-hidden="true">
                   <div
                     className={clsx(
-                      "h-full rounded-pill transition-[width] duration-500 ease-out",
+                      "h-full w-full origin-left rounded-pill transition-transform duration-500 ease-out motion-reduce:transition-none",
                       variant === "danger" ? "bg-danger" : "bg-victory",
                     )}
-                    style={{ width: `${Math.max(percent, 2)}%` }}
+                    style={{ transform: `scaleX(${scale})` }}
                   />
                 </div>
               </li>

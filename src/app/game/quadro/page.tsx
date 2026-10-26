@@ -19,7 +19,7 @@ async function ScoreboardPage() {
 
   if (!user) redirect("/login");
 
-  const { sessions, profiles, canManage, error } = await loadScoreboardAction();
+  const { sessions, profiles, canManage, totalGames, totalSpent, hasMore, error } = await loadScoreboardAction();
 
   return (
     <main className="flex min-h-dvh flex-col items-center bg-ink-950 px-4 py-6 sm:py-8">
@@ -30,7 +30,16 @@ async function ScoreboardPage() {
 
         <ErrorMessage message={error} />
 
-        {!error && <Scoreboard sessions={sessions} profiles={profiles} canManage={canManage} />}
+        {!error && (
+          <Scoreboard
+            sessions={sessions}
+            profiles={profiles}
+            canManage={canManage}
+            totalGames={totalGames}
+            totalSpent={totalSpent}
+            hasMore={hasMore}
+          />
+        )}
       </div>
     </main>
   );

@@ -26,6 +26,8 @@ function AuthForm() {
           autoCapitalize="none"
           spellCheck={false}
           maxLength={20}
+          aria-describedby={state.error ? "login-error" : undefined}
+          aria-invalid={Boolean(state.error)}
           required
         />
 
@@ -36,6 +38,8 @@ function AuthForm() {
           type="password"
           placeholder="••••••••"
           autoComplete="current-password"
+          aria-describedby={state.error ? "login-error" : undefined}
+          aria-invalid={Boolean(state.error)}
           required
         />
 
@@ -43,7 +47,7 @@ function AuthForm() {
           Entrar
         </Button>
 
-        <ErrorMessage message={state.error} />
+        <ErrorMessage id="login-error" message={state.error} />
       </form>
 
       <p className="text-sm text-ink-400 text-center mt-6">

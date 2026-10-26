@@ -1,7 +1,7 @@
 import clsx from "clsx";
 
-type ButtonVariant = "solid" | "outline" | "ghost" | "danger";
-type ButtonSize = "sm" | "md";
+export type ButtonVariant = "solid" | "outline" | "ghost" | "danger";
+export type ButtonSize = "sm" | "md";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
@@ -9,6 +9,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   size?: ButtonSize;
   fullWidth?: boolean;
   loadingLabel?: string;
+}
+
+export interface ButtonStyleOptions {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  fullWidth?: boolean;
+  className?: string;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -21,9 +28,20 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-9 gap-1.5 rounded-lg px-3 text-sm",
+  sm: "h-11 gap-1.5 rounded-lg px-3 text-sm",
   md: "h-12 gap-2 rounded-xl px-5 text-base",
 };
+
+export function buttonClasses({ variant = "solid", size = "md", fullWidth = true, className }: ButtonStyleOptions) {
+  return clsx(
+    "inline-flex items-center justify-center font-semibold transition-colors duration-150",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory",
+    fullWidth && "w-full",
+    variantClasses[variant],
+    sizeClasses[size],
+    className,
+  );
+}
 
 function Button({
   isLoading = false,
@@ -43,14 +61,9 @@ function Button({
       {...buttonProps}
       type={buttonProps.type ?? "submit"}
       className={clsx(
-        "inline-flex items-center justify-center font-semibold transition-colors duration-150",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory",
-        fullWidth && "w-full",
-        variantClasses[variant],
-        sizeClasses[size],
+        buttonClasses({ variant, size, fullWidth, className }),
         isDisabled && "pointer-events-none",
         disabled && !isLoading && "opacity-40",
-        className,
       )}
       disabled={isDisabled}
       aria-disabled={isDisabled}

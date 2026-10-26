@@ -63,6 +63,10 @@ function Input({ id, label, name, className, error, ...inputProps }: InputProps)
   const isPassword = inputProps.type === "password";
   const [showPassword, setShowPassword] = useState(false);
 
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [inputProps["aria-describedby"], errorId].filter(Boolean).join(" ") || undefined;
+  const invalid = error ? true : inputProps["aria-invalid"];
+
   function toggleVisibility() {
     const input = findInput(id);
 
@@ -116,7 +120,7 @@ function Input({ id, label, name, className, error, ...inputProps }: InputProps)
           id={id}
           name={name}
           className={clsx(
-            "h-11 w-full rounded-lg border border-ink-700 bg-ink-800 px-3",
+            "h-11 w-full min-w-0 rounded-lg border border-ink-700 bg-ink-800 px-3",
             "text-base text-ink-50 placeholder:text-ink-400 transition-colors duration-150",
             "hover:border-ink-600 focus:border-victory focus:outline-none focus:ring-1 focus:ring-victory",
             "disabled:opacity-40",
@@ -125,6 +129,8 @@ function Input({ id, label, name, className, error, ...inputProps }: InputProps)
             className,
           )}
           {...inputProps}
+          aria-describedby={describedBy}
+          aria-invalid={invalid}
           type={isPassword && showPassword ? "text" : inputProps.type}
         />
 
@@ -145,7 +151,7 @@ function Input({ id, label, name, className, error, ...inputProps }: InputProps)
         )}
       </div>
 
-      <ErrorMessage message={error} />
+      <ErrorMessage id={errorId} message={error} />
     </div>
   );
 }

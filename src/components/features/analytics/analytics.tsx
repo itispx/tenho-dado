@@ -1,9 +1,9 @@
 "use client";
 
 import clsx from "clsx";
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
+import ButtonLink from "@/components/ui/button-link/button-link";
 import Card from "@/components/ui/card/card";
 import ErrorMessage from "@/components/ui/error-message/error-message";
 import Input from "@/components/ui/input/input";
@@ -50,12 +50,12 @@ function formatInputDate(value: string): string {
 
 function SummaryCell({ label, value, detail, variant = "number" }: SummaryCellProps) {
   return (
-    <div className="min-w-0 bg-ink-900 p-3.5">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-400">{label}</p>
+    <div className="min-w-[8rem] flex-1 basis-[calc(50%-1px)] bg-ink-900 p-3.5 md:basis-[calc(25%-1px)]">
+      <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-ink-400">{label}</p>
       <p
         className={clsx(
           "mt-1.5 break-words font-semibold leading-tight tabular-nums text-ink-50",
-          variant === "number" ? "text-xl" : "text-[15px]",
+          variant === "number" ? "text-xl" : "text-[0.9375rem]",
         )}
       >
         {value}
@@ -69,14 +69,18 @@ function Analytics({ entries, profiles }: AnalyticsProps) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [preset, setPreset] = useState<PeriodPreset>("all");
+  const allPresetRef = useRef<HTMLButtonElement>(null);
 
   const { invalidRange, totalGames, totalSpent, averageSpent, lossItems, spendItems } = useMemo(
     () => buildAnalytics(entries, profiles, startDate, endDate),
     [entries, profiles, startDate, endDate],
   );
 
-  const topLoser = lossItems[0] ?? null;
+  const topLossCount = lossItems[0]?.value ?? 0;
+  const topLosers = topLossCount > 0 ? lossItems.filter((item) => item.value === topLossCount) : [];
+  const isLossTie = topLosers.length > 1;
   const hasFilter = Boolean(startDate || endDate);
+  const rangeErrorId = "analytics-range-error";
 
   const rangeSummary =
     startDate || endDate
@@ -101,28 +105,26 @@ function Analytics({ entries, profiles }: AnalyticsProps) {
     setStartDate("");
     setEndDate("");
     setPreset("all");
+    allPresetRef.current?.focus();
   }
 
   return (
     <div className="flex flex-col gap-4">
       {entries.length === 0 ? (
         <Card as="section" className="text-center">
-          <p className="text-[15px] font-semibold text-ink-50">Nenhuma partida finalizada ainda.</p>
-          <p className="mx-auto mt-1 max-w-sm text-[13px] text-ink-400">
+          <p className="text-[0.9375rem] font-semibold text-ink-50">Nenhuma partida finalizada ainda.</p>
+          <p className="mx-auto mt-1 max-w-sm text-[0.8125rem] text-ink-400">
             As análises aparecem assim que a primeira partida terminar.
           </p>
-          <Link
-            href="/game/quadro"
-            className="mt-4 inline-flex h-9 items-center justify-center rounded-lg border border-ink-700 px-3 text-sm font-semibold text-ink-200 transition-colors duration-150 hover:border-ink-600 hover:text-ink-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
-          >
+          <ButtonLink href="/game/quadro" className="mt-4">
             Ver o quadro
-          </Link>
+          </ButtonLink>
         </Card>
       ) : (
         <>
           <Card as="section" aria-labelledby="analytics-period">
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <h2 id="analytics-period" className="text-[15px] font-semibold text-ink-50">
+              <h2 id="analytics-period" className="text-[0.9375rem] font-semibold text-ink-50">
                 Período
               </h2>
 
@@ -130,11 +132,12 @@ function Analytics({ entries, profiles }: AnalyticsProps) {
                 {presets.map((item) => (
                   <button
                     key={item.key}
+                    ref={item.key === "all" ? allPresetRef : undefined}
                     type="button"
                     aria-pressed={preset === item.key}
                     onClick={() => applyPreset(item.key)}
                     className={clsx(
-                      "inline-flex h-8 items-center justify-center rounded-pill border px-3 text-xs font-semibold transition-colors duration-150",
+                      "inline-flex h-11 items-center justify-center rounded-pill border px-3 text-xs font-semibold transition-colors duration-150",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900",
                       preset === item.key
                         ? "border-ink-600 bg-ink-800 text-ink-50"
@@ -149,7 +152,7 @@ function Analytics({ entries, profiles }: AnalyticsProps) {
                   <button
                     type="button"
                     onClick={clearFilter}
-                    className="inline-flex h-8 items-center justify-center rounded-pill px-2.5 text-xs font-semibold text-ink-400 transition-colors duration-150 hover:text-ink-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+                    className="inline-flex h-11 items-center justify-center rounded-pill px-2.5 text-xs font-semibold text-ink-400 transition-colors duration-150 hover:text-ink-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
                   >
                     Limpar
                   </button>
@@ -157,30 +160,38 @@ function Analytics({ entries, profiles }: AnalyticsProps) {
               </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <Input
-                id="analytics-start"
-                label="Data inicial"
-                name="analytics-start"
-                type="date"
-                value={startDate}
-                onChange={(event) => {
-                  setStartDate(event.target.value);
-                  setPreset("custom");
-                }}
-              />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <div className="min-w-[7rem] flex-1">
+                <Input
+                  id="analytics-start"
+                  label="Data inicial"
+                  name="analytics-start"
+                  type="date"
+                  value={startDate}
+                  aria-describedby={invalidRange ? rangeErrorId : undefined}
+                  aria-invalid={invalidRange || undefined}
+                  onChange={(event) => {
+                    setStartDate(event.target.value);
+                    setPreset("custom");
+                  }}
+                />
+              </div>
 
-              <Input
-                id="analytics-end"
-                label="Data final"
-                name="analytics-end"
-                type="date"
-                value={endDate}
-                onChange={(event) => {
-                  setEndDate(event.target.value);
-                  setPreset("custom");
-                }}
-              />
+              <div className="min-w-[7rem] flex-1">
+                <Input
+                  id="analytics-end"
+                  label="Data final"
+                  name="analytics-end"
+                  type="date"
+                  value={endDate}
+                  aria-describedby={invalidRange ? rangeErrorId : undefined}
+                  aria-invalid={invalidRange || undefined}
+                  onChange={(event) => {
+                    setEndDate(event.target.value);
+                    setPreset("custom");
+                  }}
+                />
+              </div>
             </div>
 
             <p className="mt-2.5 text-xs text-ink-400" aria-live="polite">
@@ -189,35 +200,39 @@ function Analytics({ entries, profiles }: AnalyticsProps) {
 
             {invalidRange && (
               <div className="mt-3">
-                <ErrorMessage message="A data inicial não pode ser depois da data final." />
+                <ErrorMessage id={rangeErrorId} message="A data inicial não pode ser depois da data final." />
               </div>
             )}
           </Card>
 
           <section
-            className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-ink-800 bg-ink-800 md:grid-cols-4"
+            className="overflow-hidden rounded-lg border border-ink-800 bg-ink-800"
             aria-label="Resumo do período"
           >
-            <SummaryCell label="Partidas" value={String(totalGames)} />
-            <SummaryCell label="Total gasto" value={formatBRL(totalSpent)} />
-            <SummaryCell
-              label="Gasto médio"
-              value={averageSpent > 0 ? formatBRL(averageSpent) : "—"}
-              detail="por partida com gasto"
-            />
-            <SummaryCell
-              label="Mais perdeu"
-              value={topLoser ? `@${topLoser.label}` : "—"}
-              detail={
-                topLoser
-                  ? `${topLoser.value} ${topLoser.value === 1 ? "derrota" : "derrotas"}`
-                  : "sem derrotas no período"
-              }
-              variant="name"
-            />
+            <div className="flex flex-wrap gap-px">
+              <SummaryCell label="Partidas" value={String(totalGames)} />
+              <SummaryCell label="Total gasto" value={formatBRL(totalSpent)} />
+              <SummaryCell
+                label="Gasto médio"
+                value={averageSpent > 0 ? formatBRL(averageSpent) : "—"}
+                detail="por partida com gasto"
+              />
+              <SummaryCell
+                label="Mais perdeu"
+                value={isLossTie ? "Empate" : topLosers[0] ? `@${topLosers[0].label}` : "—"}
+                detail={
+                  isLossTie
+                    ? `${topLosers.length} jogadores · ${topLossCount} ${topLossCount === 1 ? "derrota" : "derrotas"}`
+                    : topLosers[0]
+                      ? `${topLossCount} ${topLossCount === 1 ? "derrota" : "derrotas"}`
+                      : "sem derrotas no período"
+                }
+                variant="name"
+              />
+            </div>
           </section>
 
-          <div className="grid gap-4 md:grid-cols-2 md:items-start">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-start">
             <BarChart
               title="Quem mais perdeu"
               items={lossItems}

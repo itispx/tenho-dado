@@ -34,11 +34,12 @@ GitHub web editor (Add file → Create new file), pasting the contents of
 2. Framework: Next.js (auto-detected). Root directory: `.`. Node 22.
 3. Environment variables, applied to **Production, Preview and Development**:
 
-   | Name                                   | Where to get it                                      |
-   | -------------------------------------- | ---------------------------------------------------- |
-   | `NEXT_PUBLIC_SUPABASE_URL`             | Supabase → Project Settings → API                    |
-   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Project Settings → API Keys               |
-   | `SUPABASE_SERVICE_ROLE_KEY`            | Supabase → Project Settings → API Keys (server only) |
+   | Name                                   | Where to get it                                          |
+   | -------------------------------------- | -------------------------------------------------------- |
+   | `NEXT_PUBLIC_SUPABASE_URL`             | Supabase → Project Settings → API                        |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Project Settings → API Keys                   |
+   | `SUPABASE_SERVICE_ROLE_KEY`            | Supabase → Project Settings → API Keys (server only)     |
+   | `REGISTRATION_INVITE_CODE`             | Optional. When set, account creation requires this code. |
 
 4. Settings → Git → Production Branch: `master`.
 5. Deploy. `.vercelignore` keeps `supabase/` and `*.md` out of the upload.

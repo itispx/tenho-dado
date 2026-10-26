@@ -1,8 +1,10 @@
 # Style Guide — Tenho Dado 🎲
 
+> **Status (2026-10-26):** This guide is historical. [`DESIGN.md`](../DESIGN.md) is the visual source of truth and [`PRODUCT.md`](../PRODUCT.md) is the product record. The naming, component, accessibility, and database conventions below remain useful; the type scale, player-row markup, folder tree, and token list are superseded where they differ.
+
 ## Stack
 
-- **Next.js 15** (App Router)
+- **Next.js 16** (App Router)
 - **TypeScript** strict
 - **Tailwind CSS v4** (mobile-first)
 - **clsx** para composição de classes
@@ -47,7 +49,8 @@ Verde (empate resolvido / confirmação)
 ## Design Tokens (CSS Custom Properties)
 
 Declare em `src/styles/globals.css`. São usados via `var(--token)` e mapeados no
-`tailwind.config.ts` para classes utilitárias.
+`@theme inline` para classes utilitárias. O conjunto vigente está em
+[`DESIGN.md`](../DESIGN.md); a lista abaixo é histórica.
 
 ```css
 /* src/styles/globals.css */
@@ -636,19 +639,26 @@ Regras que a linha de placar segue:
   `truncate` para aguentar username longo em 390px.
 
 ```tsx
-<article className="flex items-center gap-3 border-b border-ink-800 px-1 py-2.5 last:border-b-0">
-  <div className="min-w-0 flex-1">
+<article className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-ink-800 px-1 py-3 last:border-b-0">
+  <div className="min-w-[7rem] flex-1">
     <p className="truncate text-sm font-semibold text-ink-50">@{score.player.username}</p>
-    <p className="truncate text-[11px] text-ink-400">{meta}</p>
+    <p className="truncate text-xs text-ink-400">{meta}</p>
   </div>
 
-  <div className="flex items-center gap-1.5">
-    {[1, 2, 3].map((round) => (
-      <DiceFace key={round} value={valueFor(round)} size="sm" tone={isLoser ? "danger" : "neutral"} />
-    ))}
-  </div>
+  <div className="flex shrink-0 items-center gap-3">
+    <div className="flex flex-col items-end gap-1">
+      <div className="flex items-center gap-1.5" role="group" aria-label="Rodadas 1 a 3">
+        {[1, 2, 3].map((round) => (
+          <DiceFace key={round} value={valueFor(round)} size="sm" tone={isLoser ? "danger" : "neutral"} />
+        ))}
+      </div>
+    </div>
 
-  <p className="w-7 text-right font-display text-2xl tabular-nums">{score.total}</p>
+    <div className="flex w-9 shrink-0 flex-col items-end">
+      <p className="text-lg font-semibold leading-none tabular-nums">{score.total}</p>
+      <p className="mt-1 text-xs leading-none text-ink-400">soma</p>
+    </div>
+  </div>
 </article>
 ```
 

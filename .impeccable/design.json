@@ -1,0 +1,312 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T00:00:00.000Z",
+  "title": "Design System: Tenho Dado",
+  "extensions": {
+    "colorMeta": {
+      "ink-950": {
+        "role": "neutral",
+        "displayName": "Carvão 950",
+        "canonical": "#0a0a0a",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-900": {
+        "role": "neutral",
+        "displayName": "Carvão 900",
+        "canonical": "#111111",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-800": {
+        "role": "neutral",
+        "displayName": "Carvão 800",
+        "canonical": "#1c1c1c",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-700": {
+        "role": "neutral",
+        "displayName": "Carvão 700",
+        "canonical": "#2a2a2a",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-600": {
+        "role": "neutral",
+        "displayName": "Carvão 600",
+        "canonical": "#3d3d3d",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-500": {
+        "role": "neutral",
+        "displayName": "Carvão 500",
+        "canonical": "#808080",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-400": {
+        "role": "neutral",
+        "displayName": "Carvão 400",
+        "canonical": "#8f8f8f",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-200": {
+        "role": "neutral",
+        "displayName": "Carvão 200",
+        "canonical": "#c4c4c4",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "ink-50": {
+        "role": "neutral",
+        "displayName": "Carvão 50",
+        "canonical": "#f5f5f5",
+        "tonalRamp": ["#201d1d", "#403b3b", "#5f5858", "#7f7676", "#9d9595", "#bab5b5", "#d8d5d5", "#f5f4f4"]
+      },
+      "victory": {
+        "role": "primary",
+        "displayName": "Mesa Amber",
+        "canonical": "#fbbf24",
+        "tonalRamp": ["#3c2c01", "#785702", "#b48303", "#f0af04", "#fbc437", "#fcd673", "#fee8af", "#fff9eb"]
+      },
+      "victory-bg": {
+        "role": "primary",
+        "displayName": "Mesa Amber Surface",
+        "canonical": "#1c1200",
+        "tonalRamp": ["#3d2700", "#7a4f00", "#b87600", "#f59d00", "#ffb633", "#ffcc70", "#ffe2ad", "#fff8eb"]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Derrota Red",
+        "canonical": "#ef4444",
+        "tonalRamp": ["#380505", "#710a0a", "#a90e0e", "#e21313", "#ef4343", "#f47b7b", "#f9b4b4", "#fdecec"]
+      },
+      "danger-bg": {
+        "role": "secondary",
+        "displayName": "Derrota Surface",
+        "canonical": "#1f0b0b",
+        "tonalRamp": ["#2d1010", "#5a2020", "#883030", "#b54040", "#ca6868", "#da9696", "#eac3c3", "#faf0f0"]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Acerto Green",
+        "canonical": "#22c55e",
+        "tonalRamp": ["#093419", "#126832", "#1b9d4b", "#24d164", "#51e186", "#85eaaa", "#b9f3cf", "#eefcf3"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles and result announcements only; never data."
+      },
+      "display-sm": {
+        "displayName": "Display Small",
+        "purpose": "Page titles on phones."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Card titles, per-game result, section heads."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Instructions, prose, and form text."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Dates, counts, supporting detail."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase stat labels and badges."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Row totals and per-player amounts; tabular numerals."
+      },
+      "kpi": {
+        "displayName": "KPI",
+        "purpose": "Report summary values; tabular numerals."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out-quint",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "State transitions and the dice landing."
+      },
+      {
+        "name": "fast",
+        "value": "150ms",
+        "purpose": "Hover, focus, and color feedback."
+      },
+      {
+        "name": "fade",
+        "value": "180ms",
+        "purpose": "Modal overlay only."
+      },
+      {
+        "name": "sheet",
+        "value": "260ms",
+        "purpose": "Modal panel arrival; removed under reduced motion."
+      },
+      {
+        "name": "dice-roll",
+        "value": "850ms",
+        "purpose": "The one authored moment; the final face is server-driven."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action on a screen; 48px tall, ink field.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Adicionar partida</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;border:0;font-family:\"DM Sans\",system-ui,sans-serif;font-weight:600;cursor:pointer;transition:background-color 150ms ease,color 150ms ease}.ds-btn-primary{height:48px;padding:0 20px;border-radius:16px;background:var(--ink-50,#f5f5f5);color:var(--ink-950,#0a0a0a);font-size:16px}.ds-btn-primary:hover{background:var(--ink-200,#c4c4c4)}.ds-btn-primary:focus-visible{outline:2px solid var(--color-victory,#fbbf24);outline-offset:2px}"
+    },
+    {
+      "name": "Small Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary-sm",
+      "description": "Inline primary action at the 44px touch floor.",
+      "html": "<button class=\"ds-btn ds-btn-primary ds-btn-sm\">Adicionar partida</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;border:0;font-family:\"DM Sans\",system-ui,sans-serif;font-weight:600;cursor:pointer;transition:background-color 150ms ease,color 150ms ease}.ds-btn-primary{height:48px;padding:0 20px;border-radius:16px;background:var(--ink-50,#f5f5f5);color:var(--ink-950,#0a0a0a);font-size:16px}.ds-btn-primary:hover{background:var(--ink-200,#c4c4c4)}.ds-btn-sm{height:44px;padding:0 12px;font-size:14px}.ds-btn-primary:focus-visible{outline:2px solid var(--color-victory,#fbbf24);outline-offset:2px}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action and link-shaped navigation.",
+      "html": "<button class=\"ds-btn ds-btn-outline\">Carregar mais partidas</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;font-family:\"DM Sans\",system-ui,sans-serif;font-weight:600;cursor:pointer;transition:border-color 150ms ease,color 150ms ease}.ds-btn-outline{height:44px;padding:0 12px;border:1px solid var(--ink-700,#2a2a2a);border-radius:16px;background:transparent;color:var(--ink-200,#c4c4c4);font-size:14px}.ds-btn-outline:hover{border-color:var(--ink-600,#3d3d3d);color:var(--ink-50,#f5f5f5)}.ds-btn-outline:focus-visible{outline:2px solid var(--color-victory,#fbbf24);outline-offset:2px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "description": "Tertiary and destructive inline actions.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Editar</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;border:0;background:none;font-family:\"DM Sans\",system-ui,sans-serif;font-weight:600;cursor:pointer;transition:background-color 150ms ease,color 150ms ease}.ds-btn-ghost{height:44px;padding:0 12px;border-radius:16px;color:var(--ink-400,#8f8f8f);font-size:14px}.ds-btn-ghost:hover{background:var(--ink-800,#1c1c1c);color:var(--ink-50,#f5f5f5)}.ds-btn-ghost:focus-visible{outline:2px solid var(--color-victory,#fbbf24);outline-offset:2px}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A 44px dark field with a persistent label.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Nome de usuário</span><input class=\"ds-input\" value=\"guilherme\" /></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;font-family:\"DM Sans\",system-ui,sans-serif}.ds-field-label{font-size:14px;font-weight:600;color:var(--ink-200,#c4c4c4)}.ds-input{height:44px;padding:0 12px;border:1px solid var(--ink-700,#2a2a2a);border-radius:16px;background:var(--ink-800,#1c1c1c);color:var(--ink-50,#f5f5f5);font:inherit;font-size:16px;outline:none}.ds-input:hover{border-color:var(--ink-600,#3d3d3d)}.ds-input:focus{border-color:var(--color-victory,#fbbf24);box-shadow:0 0 0 1px var(--color-victory,#fbbf24)}"
+    },
+    {
+      "name": "Report Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A flat border-separated surface; never nests another card.",
+      "html": "<section class=\"ds-card\"><div class=\"ds-card-head\"><h3>Quem mais perdeu</h3><span>6 jogadores</span></div><div class=\"ds-row\"><span>@ana-paula</span><strong>1x</strong></div><div class=\"ds-row\"><span>@bia (gerido)</span><strong>1x</strong></div></section>",
+      "css": ".ds-card{box-sizing:border-box;padding:16px;border:1px solid var(--ink-800,#1c1c1c);border-radius:16px;background:var(--ink-900,#111111);color:var(--ink-50,#f5f5f5);font-family:\"DM Sans\",system-ui,sans-serif}.ds-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.ds-card-head h3{margin:0;font-size:15px;font-weight:600;line-height:1.375}.ds-card-head span{font-size:12px;color:var(--ink-400,#8f8f8f)}.ds-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--ink-800,#1c1c1c);font-size:14px;color:var(--ink-200,#c4c4c4)}.ds-row strong{font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink-50,#f5f5f5)}"
+    },
+    {
+      "name": "Report Tabs",
+      "kind": "nav",
+      "refersTo": "report-tab-active",
+      "description": "A two-up segmented control with a 44px target and a current page.",
+      "html": "<nav class=\"ds-tabs\" aria-label=\"Relatórios\"><a class=\"ds-tab is-active\" aria-current=\"page\" href=\"#\">Quadro</a><a class=\"ds-tab\" href=\"#\">Análises</a></nav>",
+      "css": ".ds-tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--ink-800,#1c1c1c);border-radius:16px;background:var(--ink-900,#111111);font-family:\"DM Sans\",system-ui,sans-serif}.ds-tab{display:flex;flex:1;align-items:center;justify-content:center;height:44px;border-radius:10px;color:var(--ink-400,#8f8f8f);font-size:14px;font-weight:600;text-decoration:none}.ds-tab:hover{background:rgba(28,28,28,.6);color:var(--ink-200,#c4c4c4)}.ds-tab.is-active{background:var(--ink-800,#1c1c1c);color:var(--ink-50,#f5f5f5)}.ds-tab:focus-visible{outline:2px solid var(--color-victory,#fbbf24);outline-offset:2px}"
+    },
+    {
+      "name": "Victory Badge",
+      "kind": "chip",
+      "refersTo": "badge-victory",
+      "description": "A pill for provenance and resolved state.",
+      "html": "<span class=\"ds-badge\">Retroativo</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;padding:2px 8px;border:1px solid rgba(251,191,36,.3);border-radius:9999px;background:var(--color-victory-bg,#1c1200);color:var(--color-victory,#fbbf24);font-family:\"DM Sans\",system-ui,sans-serif;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}"
+    },
+    {
+      "name": "Dice Face",
+      "kind": "custom",
+      "description": "The product's data object: CSS pips in a 3x3 grid, never a glyph.",
+      "html": "<span class=\"ds-die\" role=\"img\" aria-label=\"Dado: 5\"><i></i><i></i><i></i><i></i><i></i></span>",
+      "css": ".ds-die{box-sizing:border-box;display:grid;width:36px;height:36px;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:2px;padding:6px;border:1px solid var(--ink-700,#2a2a2a);border-radius:8px;background:var(--ink-800,#1c1c1c)}.ds-die i{width:5px;height:5px;border-radius:50%;background:var(--ink-50,#f5f5f5);justify-self:center;align-self:center}.ds-die i:nth-child(1){grid-area:1/1}.ds-die i:nth-child(2){grid-area:1/3}.ds-die i:nth-child(3){grid-area:2/2}.ds-die i:nth-child(4){grid-area:3/1}.ds-die i:nth-child(5){grid-area:3/3}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Mesa de Boteco",
+    "overview": "Tenho Dado looks like the table after the dice have landed: near-black, lit by a single warm amber, with the loser's name written in red. It is a working surface, not a stage. The page frame is quiet; the score rows are dense and exact. Numbers, names, dates, and amounts are set in DM Sans with tabular figures, because the group reads this board to settle a debt and settle an argument. Bebas Neue appears only when the table announces something — the page title or the loser.",
+    "keyCharacteristics": [
+      "Near-black tonal surfaces (ink-950 → ink-900 → ink-800), no shadows.",
+      "Hairline 1px borders instead of elevation; rows instead of nested cards.",
+      "One warm accent for money and state; one red for loss.",
+      "Bebas Neue for announcements, DM Sans for every readable value.",
+      "Tabular numerals everywhere a column must stay still.",
+      "Phone-first at the table, wider report columns on desktop.",
+      "44px touch controls and reflow down to 320px."
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Amber marks money and state. It occupies a small share of any screen; its rarity is what makes it read as the table light, not a brand wash.",
+        "section": "colors"
+      },
+      {
+        "name": "The Red Name Rule",
+        "body": "Red belongs to the loser, the loss, and the destructive action. It is never used for decoration, headings, or an inactive control.",
+        "section": "colors"
+      },
+      {
+        "name": "The Display Is Not Data Rule",
+        "body": "Bebas Neue is for announcements. Every number, name, date, amount, and table cell is DM Sans. If a value must be compared down a column, it is tabular and it is not display type.",
+        "section": "typography"
+      },
+      {
+        "name": "The Label Is a Whisper Rule",
+        "body": "Labels are small, uppercase, tracked, and ink-400. They name the value; they never repeat it or shout over it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two-Line Player Rule",
+        "body": "A player row has a name line and a meta line. The name is primary; the meta is secondary. Never merge them into one line.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Border Rule",
+        "body": "Declare elevation once. A surface gets a border or a shadow, never both; this system chooses the border.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No-Nested-Cards Rule",
+        "body": "If a card needs cards inside it, the hierarchy is wrong. Use rows separated by borders.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use ink-* tokens for every surface, border, and text tone; the app is dark-only by product decision.",
+      "Do use DM Sans with tabular-nums for every value that can be compared down a column.",
+      "Do lead a game card with the loser and the amount.",
+      "Do keep all touch controls at 44px, including tabs, presets, back, and inline actions.",
+      "Do declare grid-cols-1 before a md:grid-cols-* or lg:grid-cols-* breakpoint.",
+      "Do let long names truncate in rows and wrap in the game headline.",
+      "Do keep amber for money/state and red for loss/destructive action.",
+      "Do use one border, one radius family, and no shadow."
+    ],
+    "donts": [
+      "Don't set Bebas Neue on numbers, names, dates, amounts, or table cells.",
+      "Don't use fixed pixel sizes for durable type roles; use rem so user font settings apply.",
+      "Don't nest cards or add a second surface to a card to create hierarchy.",
+      "Don't add box shadows, glow, gradient text, or colored left rails.",
+      "Don't use amber for non-money/non-state decoration or red for chrome.",
+      "Don't animate width, height, or margins for bars; use transforms.",
+      "Don't use emoji or Unicode dice as functional icons.",
+      "Don't rely on color alone: pair a loss with the loser's name and a spend with a currency value.",
+      "Don't switch the app to a light theme or introduce a second accent without a product decision."
+    ]
+  }
+}

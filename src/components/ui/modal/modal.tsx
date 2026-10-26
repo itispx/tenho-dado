@@ -97,7 +97,7 @@ function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-[300] flex animate-fade-in items-end justify-center bg-black/75 px-4 pt-6 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[var(--z-modal)] flex animate-fade-in items-end justify-center bg-[var(--bg-overlay)] px-4 pt-6 backdrop-blur-sm sm:items-center sm:p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && !isBusy) onClose?.();
       }}

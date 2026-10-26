@@ -44,7 +44,7 @@ export async function registerFormAction(_previous: AuthFormState, formData: For
     return { error: parsed.error.issues[0]?.message ?? "Confira os dados informados." };
   }
 
-  return registerAction(parsed.data.username, parsed.data.password);
+  return registerAction(parsed.data.username, parsed.data.password, String(formData.get("inviteCode") ?? ""));
 }
 
 export async function signInAction(username: string, password: string): Promise<AuthActionState> {
@@ -63,7 +63,29 @@ export async function signInAction(username: string, password: string): Promise<
   redirect("/game");
 }
 
-export async function signUpAction(username: string, password: string): Promise<AuthActionState> {
+export async function signUpAction(username: string, password: string, inviteCode = ""): Promise<AuthActionState> {
+  const requiredInviteCode = process.env.REGISTRATION_INVITE_CODE?.trim();
+
+  if (requiredInviteCode && inviteCode.trim() !== requiredInviteCode) {
+    return { error: "Código de convite inválido." };
+  }
+
+  const escapedUsername = username.replace(/[\\%_]/g, "\\$&");
+  const { data: existing, error: existingError } = await adminClient
+    .from("profile")
+    .select("id")
+    .ilike("username", escapedUsername)
+    .limit(1);
+
+  if (existingError) {
+    console.error("[signUp] username lookup error", existingError);
+    return { error: "Não foi possível verificar o nome de usuário. Tente novamente." };
+  }
+
+  if (existing?.length) {
+    return { error: "Esse nome de usuário já está em uso." };
+  }
+
   const supabase = await createClient();
   const email = `${username}@${EMAIL_DOMAIN}`;
 
@@ -88,14 +110,15 @@ export async function signUpAction(username: string, password: string): Promise<
 
   if (profileError) {
     console.error("[signUp] profile insert error", profileError);
-    return { error: profileError.message };
+    await adminClient.auth.admin.deleteUser(signUpData.user.id);
+    return { error: "Não foi possível criar o perfil. Tente outro nome de usuário." };
   }
 
   return { error: null, userId: signUpData.user.id };
 }
 
-export async function registerAction(username: string, password: string): Promise<AuthActionState> {
-  const { error: signUpError } = await signUpAction(username, password);
+export async function registerAction(username: string, password: string, inviteCode = ""): Promise<AuthActionState> {
+  const { error: signUpError } = await signUpAction(username, password, inviteCode);
   if (signUpError) return { error: signUpError };
 
   return signInAction(username, password);

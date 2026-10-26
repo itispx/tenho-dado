@@ -79,7 +79,7 @@ function SessionResult({ session, me, onChanged, onLeave }: SessionResultProps) 
       {session.loser_spent !== null && (
         <div className="flex items-center justify-between gap-3 border-y border-ink-800 py-3" aria-live="polite">
           <span className="text-sm text-ink-200">@{loserScore?.player.username} gastou</span>
-          <span className="font-display text-3xl leading-none tabular-nums text-victory">
+          <span className="text-2xl font-semibold leading-none tabular-nums text-victory">
             {formatBRL(session.loser_spent)}
           </span>
         </div>

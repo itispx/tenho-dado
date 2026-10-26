@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { SCOREBOARD_ADMIN_USERNAME } from "@/lib/constants";
+import { SCOREBOARD_ADMIN_USERNAME, SCOREBOARD_PAGE_SIZE } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/current-user";
 import { getProfileSummary } from "@/lib/permissions";
 import { loadProfiles, loadSessionViews } from "@/lib/session-repository";
@@ -18,6 +18,15 @@ export interface LoadScoreboardResult {
   sessions: SessionView[];
   profiles: ProfileOption[];
   canManage: boolean;
+  totalGames: number;
+  totalSpent: number;
+  hasMore: boolean;
+  error: string | null;
+}
+
+export interface LoadMoreScoreboardResult {
+  sessions: SessionView[];
+  hasMore: boolean;
   error: string | null;
 }
 
@@ -135,32 +144,84 @@ async function validateInput(input: ScoreboardInput): Promise<{ data: ValidatedI
   };
 }
 
-export async function loadScoreboardAction(): Promise<LoadScoreboardResult> {
-  const user = await getCurrentUser();
-
-  if (!user) return { sessions: [], profiles: [], canManage: false, error: "Não autenticado." };
-
-  const profile = await getProfileSummary(user.id);
-
+async function loadFinishedSessionPage(offset: number, limit: number): Promise<LoadMoreScoreboardResult> {
   const { data: rows, error } = await adminClient
     .from("game_session")
     .select("id")
     .eq("status", "finished")
-    .order("finished_at", { ascending: false, nullsFirst: false });
+    .order("finished_at", { ascending: false, nullsFirst: false })
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit);
 
   if (error) {
-    console.error("[loadScoreboard] sessions error", error);
-    return { sessions: [], profiles: [], canManage: false, error: "Erro ao carregar o quadro." };
+    console.error("[loadFinishedSessionPage] sessions error", error);
+    return { sessions: [], hasMore: false, error: "Erro ao carregar o quadro." };
   }
 
-  const [sessions, profiles] = await Promise.all([loadSessionViews((rows ?? []).map((row) => row.id)), loadProfiles()]);
+  const ids = (rows ?? []).slice(0, limit).map((row) => row.id);
+  const sessions = await loadSessionViews(ids);
+
+  return { sessions, hasMore: (rows ?? []).length > limit, error: null };
+}
+
+export async function loadScoreboardAction(): Promise<LoadScoreboardResult> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return {
+      sessions: [],
+      profiles: [],
+      canManage: false,
+      totalGames: 0,
+      totalSpent: 0,
+      hasMore: false,
+      error: "Não autenticado.",
+    };
+  }
+
+  const [profile, totalsResult, page, profiles] = await Promise.all([
+    getProfileSummary(user.id),
+    adminClient.from("game_session").select("loser_spent", { count: "exact" }).eq("status", "finished"),
+    loadFinishedSessionPage(0, SCOREBOARD_PAGE_SIZE),
+    loadProfiles(),
+  ]);
+
+  if (totalsResult.error || page.error) {
+    return {
+      sessions: [],
+      profiles: [],
+      canManage: false,
+      totalGames: 0,
+      totalSpent: 0,
+      hasMore: false,
+      error: page.error ?? "Erro ao carregar o quadro.",
+    };
+  }
+
+  const totalSpent = (totalsResult.data ?? []).reduce((sum, row) => {
+    return sum + (row.loser_spent === null ? 0 : Number(row.loser_spent));
+  }, 0);
 
   return {
-    sessions,
+    sessions: page.sessions,
     profiles,
     canManage: profile?.username === SCOREBOARD_ADMIN_USERNAME,
+    totalGames: totalsResult.count ?? totalsResult.data?.length ?? 0,
+    totalSpent,
+    hasMore: page.hasMore,
     error: null,
   };
+}
+
+export async function loadMoreScoreboardAction(offset: number): Promise<LoadMoreScoreboardResult> {
+  const user = await getCurrentUser();
+
+  if (!user) return { sessions: [], hasMore: false, error: "Não autenticado." };
+  if (!Number.isInteger(offset) || offset < 0) {
+    return { sessions: [], hasMore: false, error: "Posição inválida." };
+  }
+
+  return loadFinishedSessionPage(offset, SCOREBOARD_PAGE_SIZE);
 }
 
 export async function loadAnalyticsAction(): Promise<LoadAnalyticsResult> {

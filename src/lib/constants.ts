@@ -1,4 +1,4 @@
-export const EMAIL_DOMAIN = "tenho-dado.local";
+export const EMAIL_DOMAIN = "tenho-dado.vercel.app";
 
 export const SESSION_MODE_LABELS = {
   manual: "Dado manual",

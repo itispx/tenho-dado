@@ -1,16 +1,25 @@
 import clsx from "clsx";
 
 import DiceFace from "@/components/ui/dice-face/dice-face";
+import { DIE_SIDES } from "@/lib/dice";
 import type { PlayerScore } from "@/lib/session-logic";
+import type { DieType } from "@/types/dice";
 
 export interface PlayerScoreCardProps {
   score: PlayerScore;
+  die?: DieType;
   isCurrent?: boolean;
   isLoser?: boolean;
   isMe?: boolean;
 }
 
-function PlayerScoreCard({ score, isCurrent = false, isLoser = false, isMe = false }: PlayerScoreCardProps) {
+function PlayerScoreCard({
+  score,
+  die = "d6",
+  isCurrent = false,
+  isLoser = false,
+  isMe = false,
+}: PlayerScoreCardProps) {
   const meta = [
     score.player.is_host ? "criador" : null,
     isMe ? "você" : null,
@@ -42,7 +51,13 @@ function PlayerScoreCard({ score, isCurrent = false, isLoser = false, isMe = fal
               const roll = score.regular.find((item) => item.round === round);
 
               return (
-                <DiceFace key={round} value={roll?.value ?? null} size="sm" tone={isLoser ? "danger" : "neutral"} />
+                <DiceFace
+                  key={round}
+                  value={roll?.value ?? null}
+                  sides={DIE_SIDES[die]}
+                  size="sm"
+                  tone={isLoser ? "danger" : "neutral"}
+                />
               );
             })}
           </div>
@@ -51,7 +66,7 @@ function PlayerScoreCard({ score, isCurrent = false, isLoser = false, isMe = fal
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-ink-400">desempate</span>
               {score.tiebreaks.map((roll) => (
-                <DiceFace key={roll.round} value={roll.value} size="sm" tone="victory" />
+                <DiceFace key={roll.round} value={roll.value} sides={DIE_SIDES[die]} size="sm" tone="victory" />
               ))}
             </div>
           )}

@@ -31,6 +31,7 @@ export type Database = {
       game_session: {
         Row: {
           created_at: string;
+          die: string;
           finished_at: string | null;
           host_id: string;
           id: string;
@@ -44,6 +45,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          die?: string;
           finished_at?: string | null;
           host_id: string;
           id?: string;
@@ -57,6 +59,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          die?: string;
           finished_at?: string | null;
           host_id?: string;
           id?: string;

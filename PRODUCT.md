@@ -28,7 +28,7 @@ A private, single-group ledger for a real-world ritual, not a public dice game o
 
 - One active session at a time; players join a lobby through invites, and the group plays together in person.
 - Two modes: **Dado manual** (the host enters every player's rolls) and **Dado online** (each player rolls on their own turn).
-- Three regular d6 rounds per player. The lowest sum loses; a tie is resolved with extra d6 until one loser remains.
+- The host chooses the session die: **d6** (the ritual) or **d20**. Three regular rounds per player. The lowest sum loses; a tie is resolved with extra rolls of the same die until one loser remains.
 - After the game, the loser — or the person who added them, or @itspx — records the amount spent. The result stays on the main screen until dismissed.
 - Finished games feed **Quadro** (full history) and **Análises** (losses and spending by period).
 - @itspx can add retroactive finished games, edit or delete them, and manage player profiles.
@@ -38,7 +38,7 @@ A private, single-group ledger for a real-world ritual, not a public dice game o
 ## Capabilities and Constraints
 
 - **Auth:** username + password only; email is an implementation detail of synthetic accounts. Managed profiles have no login. Registration can be gated by a group invite code (`REGISTRATION_INVITE_CODE`).
-- **Game rules:** 3 regular rounds of d6; lowest total loses; tiebreaks use extra d6; the loser is persisted with the session.
+- **Game rules:** the host picks d6 or d20 when creating the session; 3 regular rounds of that die; lowest total loses; tiebreaks use extra rolls of the same die; the loser is persisted with the session.
 - **History:** finished sessions store players, rolls, loser, and `loser_spent`; @itspx can create, edit, and delete them. A one-off SQL import brought historical WhatsApp games in as retroactive sessions; there is no import UI.
 - **Analytics:** counts losses and sums spending per profile, filtered by finish date. Values are BRL.
 - **Permissions:** editing the board and players is gated on the `itspx` username, not a role table.
@@ -64,7 +64,7 @@ A private, single-group ledger for a real-world ritual, not a public dice game o
 
 1. **The record outlives the game.** Every live feature must leave a trustworthy history; the board and analyses are the lasting value.
 2. **Build for one known group.** Optimize for this circle's rituals and names, not anonymous public users or multi-tenant scale.
-3. **Keep the ritual intact.** Three dice, lowest sum loses, loser logs the spending. Do not turn it into a betting or payout product.
+3. **Keep the ritual intact.** Three rolls, lowest sum loses, loser logs the spending. Do not turn it into a betting or payout product.
 4. **Operator trust.** @itspx can correct history and players; destructive actions are explicit, and edits are intentional.
 5. **Phone-first at the table.** The live flow works one-handed, fast, with minimal typing.
 

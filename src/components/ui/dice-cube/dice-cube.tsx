@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
 import { Pips } from "../dice-face/pips";
+import { DICE_LAND_MS, DICE_ROLL_MS, HOP_KEYFRAMES } from "../dice-motion";
 
 type CubeTone = "neutral" | "victory" | "danger" | "muted";
 
@@ -20,12 +21,6 @@ export interface DiceCubeProps {
 
 /** Lado da face em px (o cubo inteiro mede 96px). */
 const HALF = 47;
-
-/** Duração do giro até a face final, alinhada com o hop do palco. */
-const SPIN_MS = 850;
-
-/** Pouso curto de chegada (quando outro jogador rola). */
-const LAND_MS = 260;
 
 const ORIENTATION: Record<number, { x: number; y: number }> = {
   1: { x: 0, y: 0 },
@@ -55,16 +50,6 @@ const TONE_CLASSES: Record<CubeTone, string> = {
   danger: "border-danger/50 bg-danger-bg text-danger",
   muted: "border-ink-700 bg-ink-900 text-ink-600",
 };
-
-const HOP_KEYFRAMES: Keyframe[] = [
-  { transform: "translateY(0) scale(1)", easing: "cubic-bezier(0.3, 0, 0.7, 0.3)" },
-  { offset: 0.12, transform: "translateY(-16px) scale(0.97)", easing: "cubic-bezier(0.2, 0.7, 0.4, 1)" },
-  { offset: 0.38, transform: "translateY(-24px) scale(1.02)", easing: "cubic-bezier(0.6, 0, 0.9, 0.5)" },
-  { offset: 0.56, transform: "translateY(0) scale(1)", easing: "cubic-bezier(0.2, 0.8, 0.4, 1)" },
-  { offset: 0.7, transform: "translateY(0) scale(1.05, 0.92)", easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-  { offset: 0.85, transform: "translateY(-3px) scale(0.99, 1.03)" },
-  { transform: "translateY(0) scale(1)" },
-];
 
 function transformFor(x: number, y: number): string {
   return `rotateX(${x}deg) rotateY(${y}deg)`;
@@ -124,17 +109,17 @@ function DiceCube({
       // Gira duas voltas em X e três em Y e para exatamente na face sorteada.
       cube.animate(
         [{ transform: transformFor(from.x, from.y) }, { transform: transformFor(target.x + 720, target.y + 1080) }],
-        { duration: SPIN_MS, easing: "cubic-bezier(0.16, 0.72, 0.27, 1)" },
+        { duration: DICE_ROLL_MS, easing: "cubic-bezier(0.16, 0.72, 0.27, 1)" },
       );
 
-      hopRef.current?.animate(HOP_KEYFRAMES, { duration: SPIN_MS, fill: "both" });
+      hopRef.current?.animate(HOP_KEYFRAMES, { duration: DICE_ROLL_MS, fill: "both" });
       return;
     }
 
     // Chegada remota: só o encaixe, sem tumble.
     cube.animate(
       [{ transform: transformFor(target.x - 10, target.y - 12) }, { transform: transformFor(target.x, target.y) }],
-      { duration: LAND_MS, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+      { duration: DICE_LAND_MS, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
     );
   }, [isRolling, landKey, value]);
 

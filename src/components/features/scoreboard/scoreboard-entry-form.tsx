@@ -9,8 +9,10 @@ import ErrorMessage from "@/components/ui/error-message/error-message";
 import Input from "@/components/ui/input/input";
 import Modal from "@/components/ui/modal/modal";
 import Select from "@/components/ui/select/select";
+import { DIE_LABELS, DIE_SIDES, isValidDieValue } from "@/lib/dice";
 import { parseMoneyInput, toDateInputValue, toMoneyInputValue } from "@/lib/format";
 import { orderPlayers } from "@/lib/session-logic";
+import type { DieType } from "@/types/dice";
 import type { ScoreboardInput } from "@/types/scoreboard";
 import type { ProfileOption, SessionView } from "@/types/session";
 
@@ -69,6 +71,7 @@ function ScoreboardEntryForm({ session, profiles, onClose, onSaved }: Scoreboard
   const initialRolls = buildInitialRolls(session);
 
   const [date, setDate] = useState(toDateInputValue(session?.finished_at ?? session?.created_at ?? null));
+  const [die, setDie] = useState<DieType>(session?.die ?? "d6");
   const [selectedProfileIds, setSelectedProfileIds] = useState<string[]>(
     orderedSessionPlayers.map((player) => player.profile_id),
   );
@@ -86,6 +89,22 @@ function ScoreboardEntryForm({ session, profiles, onClose, onSaved }: Scoreboard
     if (!profile) return "@?";
 
     return `@${profile.username}${profile.isManaged ? " (gerido)" : ""}`;
+  }
+
+  function changeDie(nextDie: DieType) {
+    const max = DIE_SIDES[nextDie];
+
+    setDie(nextDie);
+    setError(null);
+    setRollsByProfile((current) => {
+      const next: RollsByProfile = {};
+
+      for (const [profileId, values] of Object.entries(current)) {
+        next[profileId] = values.map((value) => (value === "" || value <= max ? value : "")) as DiceValues;
+      }
+
+      return next;
+    });
   }
 
   function togglePlayer(profileId: string) {
@@ -173,8 +192,8 @@ function ScoreboardEntryForm({ session, profiles, onClose, onSaved }: Scoreboard
 
       const rolls: [number, number, number] = [Number(values[0]), Number(values[1]), Number(values[2])];
 
-      if (rolls.some((value) => !Number.isInteger(value) || value < 1 || value > 6)) {
-        setError("Os dados devem estar entre 1 e 6.");
+      if (rolls.some((value) => !isValidDieValue(value, die))) {
+        setError(`Os dados devem estar entre 1 e ${DIE_SIDES[die]}.`);
         return;
       }
 
@@ -198,6 +217,7 @@ function ScoreboardEntryForm({ session, profiles, onClose, onSaved }: Scoreboard
     try {
       const input: ScoreboardInput = {
         finishedAt: date,
+        die,
         players,
         loserProfileId,
         loserSpent: spentValue,
@@ -270,6 +290,17 @@ function ScoreboardEntryForm({ session, profiles, onClose, onSaved }: Scoreboard
           required
         />
 
+        <Select
+          id="scoreboard-die"
+          label="Dado da partida"
+          value={die}
+          onChange={(event) => changeDie(event.target.value as DieType)}
+          disabled={isSaving}
+        >
+          <option value="d6">{DIE_LABELS.d6} · 1 a 6</option>
+          <option value="d20">{DIE_LABELS.d20} · 1 a 20</option>
+        </Select>
+
         <section className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold text-ink-200">Jogadores</h3>
 
@@ -328,7 +359,7 @@ function ScoreboardEntryForm({ session, profiles, onClose, onSaved }: Scoreboard
                           className="text-center"
                         >
                           <option value="">–</option>
-                          {[1, 2, 3, 4, 5, 6].map((value) => (
+                          {Array.from({ length: DIE_SIDES[die] }, (_, index) => index + 1).map((value) => (
                             <option key={value} value={value}>
                               {value}
                             </option>

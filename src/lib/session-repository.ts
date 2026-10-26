@@ -145,6 +145,7 @@ export async function loadSessionViews(sessionIds: string[]): Promise<SessionVie
       host_id: session.host_id,
       host_username: usernames.get(session.host_id) ?? "?",
       mode: session.mode as SessionMode,
+      die: session.die === "d20" ? "d20" : "d6",
       status: session.status as SessionStatus,
       source: session.source as SessionSource,
       invite_version: session.invite_version,

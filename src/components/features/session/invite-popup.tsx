@@ -46,7 +46,8 @@ function InvitePopup({ session, onJoin, onDismiss }: InvitePopupProps) {
 
         <p className="mt-2 text-sm text-ink-400">
           @{session.host_username} abriu uma sessão de{" "}
-          <span className="font-semibold text-victory">{SESSION_MODE_LABELS[session.mode]}</span>.
+          <span className="font-semibold text-victory">{SESSION_MODE_LABELS[session.mode]}</span>
+          {session.die === "d20" ? " com D20" : ""}.
         </p>
 
         <p className="mt-1 text-xs text-ink-400">

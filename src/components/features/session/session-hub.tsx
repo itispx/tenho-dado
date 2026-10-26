@@ -12,6 +12,7 @@ import SignOut from "@/components/features/sign-out/sign-out";
 import Card from "@/components/ui/card/card";
 import ErrorMessage from "@/components/ui/error-message/error-message";
 import { SESSION_MODE_LABELS } from "@/lib/constants";
+import { DIE_LABELS } from "@/lib/dice";
 import { getDismissedInviteKey, setDismissedInviteKey, subscribeDismissedInvite } from "@/lib/invite-storage";
 import { supabase } from "@/lib/supabase/client";
 import type { ProfileOption, SessionData, SessionView } from "@/types/session";
@@ -181,6 +182,7 @@ function SessionHub({ initialData, initialError, me, profiles }: SessionHubProps
               <h2 className="text-sm font-semibold text-ink-200">Sessão em andamento</h2>
               <p className="mt-1 text-sm font-semibold text-ink-50">
                 @{active.host_username} · {SESSION_MODE_LABELS[active.mode]}
+                {active.die === "d20" ? ` · ${DIE_LABELS.d20}` : ""}
               </p>
               <p className="mt-2 text-xs text-ink-400">
                 {active.status === "lobby"

@@ -16,6 +16,7 @@ import Card from "@/components/ui/card/card";
 import ErrorMessage from "@/components/ui/error-message/error-message";
 import Select from "@/components/ui/select/select";
 import { SCOREBOARD_ADMIN_USERNAME, SESSION_MODE_LABELS } from "@/lib/constants";
+import { DIE_LABELS } from "@/lib/dice";
 import type { ProfileOption, SessionView } from "@/types/session";
 
 export interface SessionLobbyProps {
@@ -166,7 +167,10 @@ function SessionLobby({ session, me, profiles, onChanged }: SessionLobbyProps) {
             <p className="mt-1.5 text-xs text-ink-400">Sessão aberta</p>
           </div>
 
-          <Badge variant="victory">{SESSION_MODE_LABELS[session.mode]}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="victory">{SESSION_MODE_LABELS[session.mode]}</Badge>
+            {session.die === "d20" && <Badge variant="neutral">{DIE_LABELS.d20}</Badge>}
+          </div>
         </div>
 
         <p className="mt-3 text-xs text-ink-400">

@@ -4,9 +4,11 @@ import { revalidatePath } from "next/cache";
 
 import { SCOREBOARD_ADMIN_USERNAME, SCOREBOARD_PAGE_SIZE } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/current-user";
+import { DIE_SIDES, isDieType, isValidDieValue } from "@/lib/dice";
 import { getProfileSummary } from "@/lib/permissions";
 import { loadProfiles, loadSessionViews } from "@/lib/session-repository";
 import { adminClient } from "@/lib/supabase/admin";
+import type { DieType } from "@/types/dice";
 import type { AnalyticsEntry, ScoreboardInput } from "@/types/scoreboard";
 import type { ProfileOption, SessionView } from "@/types/session";
 
@@ -38,6 +40,7 @@ export interface LoadAnalyticsResult {
 
 interface ValidatedInput {
   finishedAt: string;
+  die: DieType;
   players: { profileId: string; rolls: [number, number, number] }[];
   loserProfileId: string;
   loserSpent: number;
@@ -92,6 +95,8 @@ async function validateInput(input: ScoreboardInput): Promise<{ data: ValidatedI
 
   if (!finishedAt) return { data: null, error: "Informe uma data válida." };
 
+  const die = isDieType(input.die) ? input.die : "d6";
+
   if (input.players.length < 2) {
     return { data: null, error: "Selecione pelo menos 2 jogadores." };
   }
@@ -104,8 +109,8 @@ async function validateInput(input: ScoreboardInput): Promise<{ data: ValidatedI
     }
 
     for (const roll of player.rolls) {
-      if (!Number.isInteger(roll) || roll < 1 || roll > 6) {
-        return { data: null, error: "Os dados devem estar entre 1 e 6." };
+      if (!isValidDieValue(roll, die)) {
+        return { data: null, error: `Os dados devem estar entre 1 e ${DIE_SIDES[die]}.` };
       }
     }
 
@@ -136,6 +141,7 @@ async function validateInput(input: ScoreboardInput): Promise<{ data: ValidatedI
   return {
     data: {
       finishedAt,
+      die,
       players: input.players,
       loserProfileId: input.loserProfileId,
       loserSpent: Math.round(input.loserSpent * 100) / 100,
@@ -267,6 +273,7 @@ export async function createRetroactiveSessionAction(input: ScoreboardInput): Pr
     .insert({
       host_id: admin.userId,
       mode: "manual",
+      die: data.die,
       status: "finished",
       source: "retroactive",
       loser_profile_id: data.loserProfileId,
@@ -439,6 +446,7 @@ export async function updateFinishedSessionAction(
     .from("game_session")
     .update({
       finished_at: data.finishedAt,
+      die: data.die,
       loser_profile_id: data.loserProfileId,
       loser_spent: data.loserSpent,
     })

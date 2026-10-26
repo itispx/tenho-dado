@@ -1,14 +1,18 @@
 "use client";
 
+import clsx from "clsx";
 import { useRef, useState } from "react";
 
 import { cancelGameAction, rollDiceAction, submitManualRollAction } from "@/actions/session";
 import Badge from "@/components/ui/badge/badge";
 import Button from "@/components/ui/button/button";
 import DiceCube from "@/components/ui/dice-cube/dice-cube";
+import DiceD20 from "@/components/ui/dice-d20/dice-d20";
 import DiceFace from "@/components/ui/dice-face/dice-face";
+import { DICE_ROLL_MS } from "@/components/ui/dice-motion";
 import ErrorMessage from "@/components/ui/error-message/error-message";
 import { SCOREBOARD_ADMIN_USERNAME, SESSION_MODE_LABELS } from "@/lib/constants";
+import { DIE_LABELS, DIE_SIDES } from "@/lib/dice";
 import { canActForPlayer } from "@/lib/roll-permissions";
 import { getPlayerScores, getTurnPhase } from "@/lib/session-logic";
 import type { SessionView } from "@/types/session";
@@ -21,8 +25,8 @@ export interface SessionGameProps {
   onChanged: () => Promise<void>;
 }
 
-/** Duração do giro do cubo. O dado só termina de rolar depois disso. */
-const ROLL_ANIM_MS = 850;
+/** Valores do d20 oferecidos no registro manual. */
+const MANUAL_D20_VALUES = Array.from({ length: DIE_SIDES.d20 }, (_, index) => index + 1);
 
 function SessionGame({ session, me, onChanged }: SessionGameProps) {
   const scores = getPlayerScores(session);
@@ -43,7 +47,6 @@ function SessionGame({ session, me, onChanged }: SessionGameProps) {
   const hasTurn = phase.kind === "regular" || phase.kind === "tiebreak";
 
   const rollingRef = useRef(false);
-  const manualRollRef = useRef(false);
   const [isRolling, setIsRolling] = useState(false);
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,7 +98,7 @@ function SessionGame({ session, me, onChanged }: SessionGameProps) {
       // O cubo gira só depois de saber a face: o tempo do giro é respeitado
       // mesmo quando o servidor responde antes. Sem animação, não há espera.
       if (!reduceMotion) {
-        await new Promise((resolve) => setTimeout(resolve, ROLL_ANIM_MS));
+        await new Promise((resolve) => setTimeout(resolve, DICE_ROLL_MS));
       }
 
       landed = true;
@@ -110,10 +113,9 @@ function SessionGame({ session, me, onChanged }: SessionGameProps) {
   }
 
   async function handleManualRoll(value: number) {
-    if (manualRollRef.current) return;
+    if (isSubmittingManual) return;
     if (phase.kind !== "regular" && phase.kind !== "tiebreak") return;
 
-    manualRollRef.current = true;
     setIsSubmittingManual(true);
     setError(null);
 
@@ -129,7 +131,6 @@ function SessionGame({ session, me, onChanged }: SessionGameProps) {
       setError("Erro ao registrar a jogada. Tente novamente.");
     } finally {
       setIsSubmittingManual(false);
-      manualRollRef.current = false;
     }
   }
 
@@ -153,12 +154,29 @@ function SessionGame({ session, me, onChanged }: SessionGameProps) {
     <div className="flex flex-col gap-4">
       <section className="rounded-lg border border-ink-800 bg-ink-900 p-5" aria-live="polite">
         <div className="flex items-center justify-between gap-3">
-          <Badge variant="victory">{SESSION_MODE_LABELS[session.mode]}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="victory">{SESSION_MODE_LABELS[session.mode]}</Badge>
+            {session.die === "d20" && <Badge variant="neutral">{DIE_LABELS.d20}</Badge>}
+          </div>
           <p className="text-xs tabular-nums text-ink-400">{phaseLabel}</p>
         </div>
 
         <div className="mt-6 flex flex-col items-center gap-4 text-center">
-          <DiceCube value={lastValue} isRolling={isRolling} landKey={landKey} tone={isMyTurn ? "victory" : "neutral"} />
+          {session.die === "d20" ? (
+            <DiceD20
+              value={lastValue}
+              isRolling={isRolling}
+              landKey={landKey}
+              tone={isMyTurn ? "victory" : "neutral"}
+            />
+          ) : (
+            <DiceCube
+              value={lastValue}
+              isRolling={isRolling}
+              landKey={landKey}
+              tone={isMyTurn ? "victory" : "neutral"}
+            />
+          )}
 
           <div className="flex flex-col gap-1">
             <h2 className="font-display text-4xl uppercase leading-none tracking-wide text-ink-50">{headline}</h2>
@@ -180,19 +198,34 @@ function SessionGame({ session, me, onChanged }: SessionGameProps) {
           )}
 
           {session.mode === "manual" && isHost && hasTurn && (
-            <div className="grid w-full grid-cols-3 gap-2">
-              {[1, 2, 3, 4, 5, 6].map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => handleManualRoll(value)}
-                  disabled={isSubmittingManual}
-                  aria-label={`Registrar ${value}`}
-                  className="flex items-center justify-center rounded-md border border-ink-700 bg-ink-950/40 py-2.5 transition-colors duration-150 hover:border-victory/50 hover:bg-victory-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 disabled:opacity-40"
-                >
-                  <DiceFace value={value} size="md" decorative />
-                </button>
-              ))}
+            <div
+              className={clsx("w-full", session.die === "d20" ? "grid grid-cols-5 gap-2" : "grid grid-cols-3 gap-2")}
+            >
+              {session.die === "d20"
+                ? MANUAL_D20_VALUES.map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => handleManualRoll(value)}
+                      disabled={isSubmittingManual}
+                      aria-label={`Registrar ${value}`}
+                      className="flex min-h-11 items-center justify-center rounded-md border border-ink-700 bg-ink-950/40 text-sm font-semibold tabular-nums text-ink-50 transition-colors duration-150 hover:border-victory/50 hover:bg-victory-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 disabled:opacity-40"
+                    >
+                      {value}
+                    </button>
+                  ))
+                : [1, 2, 3, 4, 5, 6].map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => handleManualRoll(value)}
+                      disabled={isSubmittingManual}
+                      aria-label={`Registrar ${value}`}
+                      className="flex items-center justify-center rounded-md border border-ink-700 bg-ink-950/40 py-2.5 transition-colors duration-150 hover:border-victory/50 hover:bg-victory-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900 disabled:opacity-40"
+                    >
+                      <DiceFace value={value} size="md" decorative />
+                    </button>
+                  ))}
             </div>
           )}
 
@@ -207,6 +240,7 @@ function SessionGame({ session, me, onChanged }: SessionGameProps) {
           <PlayerScoreCard
             key={score.player.id}
             score={score}
+            die={session.die}
             isCurrent={currentPlayer?.id === score.player.id}
             isMe={score.player.profile_id === me.id}
           />

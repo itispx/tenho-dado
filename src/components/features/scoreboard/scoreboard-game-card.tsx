@@ -6,6 +6,7 @@ import { deleteFinishedSessionAction } from "@/actions/scoreboard";
 import Badge from "@/components/ui/badge/badge";
 import Button from "@/components/ui/button/button";
 import ErrorMessage from "@/components/ui/error-message/error-message";
+import { DIE_LABELS } from "@/lib/dice";
 import { formatBRL, formatSessionDate } from "@/lib/format";
 import { getPlayerScores } from "@/lib/session-logic";
 import type { SessionView } from "@/types/session";
@@ -63,6 +64,7 @@ function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: Scoreboar
             {session.players.length} {session.players.length === 1 ? "jogador" : "jogadores"}
           </span>
           {session.source === "retroactive" && <Badge variant="victory">Retroativo</Badge>}
+          {session.die === "d20" && <Badge variant="neutral">{DIE_LABELS.d20}</Badge>}
         </div>
 
         <div className="mt-2 flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
@@ -96,6 +98,7 @@ function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: Scoreboar
           <PlayerScoreCard
             key={score.player.id}
             score={score}
+            die={session.die}
             isLoser={score.player.profile_id === session.loser_profile_id}
           />
         ))}

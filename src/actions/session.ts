@@ -6,11 +6,13 @@ import { revalidatePath } from "next/cache";
 
 import { SCOREBOARD_ADMIN_USERNAME } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/current-user";
+import { DIE_SIDES, isDieType, isValidDieValue } from "@/lib/dice";
 import { getProfileSummary, isScoreboardAdmin } from "@/lib/permissions";
 import { canActForPlayer } from "@/lib/roll-permissions";
 import { getTurnPhase } from "@/lib/session-logic";
 import { loadSessionView } from "@/lib/session-repository";
 import { adminClient } from "@/lib/supabase/admin";
+import type { DieType } from "@/types/dice";
 import type { SessionData, SessionMode, SessionStatus, SessionView } from "@/types/session";
 
 export interface SessionActionState {
@@ -159,13 +161,17 @@ export async function loadSessionByIdAction(sessionId: string): Promise<SessionV
   return isParticipant ? session : null;
 }
 
-export async function createSessionAction(mode: SessionMode): Promise<SessionActionState> {
+export async function createSessionAction(mode: SessionMode, die: DieType = "d6"): Promise<SessionActionState> {
   const user = await getCurrentUser();
 
   if (!user) return { error: "Não autenticado." };
 
   if (mode !== "manual" && mode !== "online") {
     return { error: "Modo de jogo inválido." };
+  }
+
+  if (!isDieType(die)) {
+    return { error: "Dado inválido." };
   }
 
   const { data: activeSession, error: activeError } = await adminClient
@@ -184,7 +190,7 @@ export async function createSessionAction(mode: SessionMode): Promise<SessionAct
 
   const { data: session, error: sessionError } = await adminClient
     .from("game_session")
-    .insert({ host_id: user.id, mode })
+    .insert({ host_id: user.id, mode, die })
     .select("id")
     .single();
 
@@ -548,7 +554,7 @@ export async function rollDiceAction(sessionId: string): Promise<SessionActionSt
 
   const { error } = await adminClient.from("session_roll").insert({
     session_player_id: currentPlayer.id,
-    value: randomInt(1, 7),
+    value: randomInt(1, DIE_SIDES[session.die] + 1),
     round: phase.round,
     is_tiebreak: phase.kind === "tiebreak",
   });
@@ -576,7 +582,7 @@ export async function submitManualRollAction(
 
   if (!user) return { error: "Não autenticado." };
 
-  if (!Number.isInteger(value) || value < 1 || value > 6) {
+  if (!Number.isInteger(value) || value < 1 || value > DIE_SIDES.d20) {
     return { error: "Valor de dado inválido." };
   }
 
@@ -586,6 +592,10 @@ export async function submitManualRollAction(
   if (session.host_id !== user.id) return { error: "Apenas o criador pode registrar as jogadas." };
   if (session.mode !== "manual") return { error: "Esta sessão usa o dado online." };
   if (session.status !== "playing") return { error: "A partida não está em andamento." };
+
+  if (!isValidDieValue(value, session.die)) {
+    return { error: `O valor deve estar entre 1 e ${DIE_SIDES[session.die]}.` };
+  }
 
   const phase = getTurnPhase(session.players, session.rolls);
 

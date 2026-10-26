@@ -7,6 +7,8 @@ import { createSessionAction } from "@/actions/session";
 import Button from "@/components/ui/button/button";
 import Card from "@/components/ui/card/card";
 import ErrorMessage from "@/components/ui/error-message/error-message";
+import { DIE_LABELS } from "@/lib/dice";
+import type { DieType } from "@/types/dice";
 import type { SessionMode } from "@/types/session";
 
 export interface CreateSessionProps {
@@ -26,8 +28,60 @@ const modes: { value: SessionMode; title: string; description: string }[] = [
   },
 ];
 
+const dice: { value: DieType; title: string; description: string }[] = [
+  {
+    value: "d6",
+    title: DIE_LABELS.d6,
+    description: "Três jogadas de 1 a 6. O ritual de sempre.",
+  },
+  {
+    value: "d20",
+    title: DIE_LABELS.d20,
+    description: "Três jogadas de 1 a 20. Mais caos na mesa.",
+  },
+];
+
+interface RadioChoiceProps {
+  isSelected: boolean;
+  title: string;
+  description: string;
+  onSelect: () => void;
+}
+
+function RadioChoice({ isSelected, title, description, onSelect }: RadioChoiceProps) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={isSelected}
+      onClick={onSelect}
+      className={clsx(
+        "flex w-full items-start gap-3 rounded-md border p-3 text-left transition-colors duration-150",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
+        isSelected ? "border-victory/50 bg-victory-bg" : "border-ink-700 bg-ink-950/40 hover:border-ink-600",
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className={clsx(
+          "mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border",
+          isSelected ? "border-victory" : "border-ink-600",
+        )}
+      >
+        {isSelected && <span className="size-2 rounded-full bg-victory" />}
+      </span>
+
+      <span className="flex flex-col gap-0.5">
+        <span className={clsx("text-sm font-semibold", isSelected ? "text-victory" : "text-ink-200")}>{title}</span>
+        <span className="text-xs text-ink-400">{description}</span>
+      </span>
+    </button>
+  );
+}
+
 function CreateSession({ onCreated }: CreateSessionProps) {
   const [mode, setMode] = useState<SessionMode>("manual");
+  const [die, setDie] = useState<DieType>("d6");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,7 +90,7 @@ function CreateSession({ onCreated }: CreateSessionProps) {
     setError(null);
 
     try {
-      const result = await createSessionAction(mode);
+      const result = await createSessionAction(mode, die);
 
       if (result.error) {
         setError(result.error);
@@ -59,41 +113,29 @@ function CreateSession({ onCreated }: CreateSessionProps) {
       </p>
 
       <div className="mt-4 flex flex-col gap-2" role="radiogroup" aria-label="Modo de jogo">
-        {modes.map((option) => {
-          const isSelected = mode === option.value;
+        {modes.map((option) => (
+          <RadioChoice
+            key={option.value}
+            isSelected={mode === option.value}
+            title={option.title}
+            description={option.description}
+            onSelect={() => setMode(option.value)}
+          />
+        ))}
+      </div>
 
-          return (
-            <button
-              key={option.value}
-              type="button"
-              role="radio"
-              aria-checked={isSelected}
-              onClick={() => setMode(option.value)}
-              className={clsx(
-                "flex w-full items-start gap-3 rounded-md border p-3 text-left transition-colors duration-150",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-victory focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
-                isSelected ? "border-victory/50 bg-victory-bg" : "border-ink-700 bg-ink-950/40 hover:border-ink-600",
-              )}
-            >
-              <span
-                aria-hidden="true"
-                className={clsx(
-                  "mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border",
-                  isSelected ? "border-victory" : "border-ink-600",
-                )}
-              >
-                {isSelected && <span className="size-2 rounded-full bg-victory" />}
-              </span>
+      <h3 className="mt-4 text-sm font-semibold text-ink-200">Dado</h3>
 
-              <span className="flex flex-col gap-0.5">
-                <span className={clsx("text-sm font-semibold", isSelected ? "text-victory" : "text-ink-200")}>
-                  {option.title}
-                </span>
-                <span className="text-xs text-ink-400">{option.description}</span>
-              </span>
-            </button>
-          );
-        })}
+      <div className="mt-2 flex flex-col gap-2" role="radiogroup" aria-label="Dado">
+        {dice.map((option) => (
+          <RadioChoice
+            key={option.value}
+            isSelected={die === option.value}
+            title={option.title}
+            description={option.description}
+            onSelect={() => setDie(option.value)}
+          />
+        ))}
       </div>
 
       <div className="mt-4">

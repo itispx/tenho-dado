@@ -3,6 +3,7 @@
 import Button from "@/components/ui/button/button";
 import DiceFace from "@/components/ui/dice-face/dice-face";
 import { SCOREBOARD_ADMIN_USERNAME } from "@/lib/constants";
+import { DIE_SIDES } from "@/lib/dice";
 import { formatBRL } from "@/lib/format";
 import { getPlayerScores } from "@/lib/session-logic";
 import type { SessionView } from "@/types/session";
@@ -54,11 +55,17 @@ function SessionResult({ session, me, onChanged, onLeave }: SessionResultProps) 
         {loserScore && (
           <div className="mt-3 flex flex-wrap justify-center gap-2">
             {loserScore.regular.map((roll) => (
-              <DiceFace key={roll.round} value={roll.value} size="md" tone="danger" />
+              <DiceFace key={roll.round} value={roll.value} sides={DIE_SIDES[session.die]} size="md" tone="danger" />
             ))}
 
             {loserScore.tiebreaks.map((roll) => (
-              <DiceFace key={`tiebreak-${roll.round}`} value={roll.value} size="md" tone="danger" />
+              <DiceFace
+                key={`tiebreak-${roll.round}`}
+                value={roll.value}
+                sides={DIE_SIDES[session.die]}
+                size="md"
+                tone="danger"
+              />
             ))}
           </div>
         )}
@@ -98,6 +105,7 @@ function SessionResult({ session, me, onChanged, onLeave }: SessionResultProps) 
           <PlayerScoreCard
             key={score.player.id}
             score={score}
+            die={session.die}
             isMe={score.player.profile_id === me.id}
             isLoser={score.player.profile_id === session.loser_profile_id}
           />

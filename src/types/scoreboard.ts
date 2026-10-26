@@ -1,5 +1,8 @@
+import type { DieType } from "./dice";
+
 export interface ScoreboardInput {
   finishedAt: string;
+  die: DieType;
   players: { profileId: string; rolls: [number, number, number] }[];
   loserProfileId: string;
   loserSpent: number;

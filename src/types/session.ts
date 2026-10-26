@@ -1,4 +1,5 @@
 import type { Tables } from "./database";
+import type { DieType } from "./dice";
 
 export type SessionMode = "manual" | "online";
 
@@ -43,6 +44,7 @@ export interface SessionView {
   host_id: string;
   host_username: string;
   mode: SessionMode;
+  die: DieType;
   status: SessionStatus;
   source: SessionSource;
   invite_version: number;

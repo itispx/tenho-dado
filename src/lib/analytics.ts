@@ -13,6 +13,7 @@ export interface AnalyticsSummary {
   invalidRange: boolean;
   totalGames: number;
   totalSpent: number;
+  averageSpent: number;
   lossItems: AnalyticsBarItem[];
   spendItems: AnalyticsBarItem[];
 }
@@ -45,6 +46,7 @@ export function buildAnalytics(
   const lossCounts = new Map<string, number>();
   const spendTotals = new Map<string, number>();
   let totalSpent = 0;
+  let spentGames = 0;
 
   for (const entry of filtered) {
     if (entry.loser_profile_id) {
@@ -54,6 +56,7 @@ export function buildAnalytics(
     if (entry.loser_profile_id && entry.loser_spent !== null) {
       spendTotals.set(entry.loser_profile_id, (spendTotals.get(entry.loser_profile_id) ?? 0) + entry.loser_spent);
       totalSpent += entry.loser_spent;
+      spentGames += 1;
     }
   }
 
@@ -79,6 +82,7 @@ export function buildAnalytics(
     invalidRange,
     totalGames: filtered.length,
     totalSpent,
+    averageSpent: spentGames > 0 ? totalSpent / spentGames : 0,
     lossItems,
     spendItems,
   };

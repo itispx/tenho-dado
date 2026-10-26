@@ -21,6 +21,8 @@ export interface ScoreboardGameCardProps {
 
 function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: ScoreboardGameCardProps) {
   const scores = getPlayerScores(session);
+  const loser = scores.find((score) => score.player.profile_id === session.loser_profile_id) ?? null;
+  const playedAt = session.finished_at ?? session.created_at;
 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,69 +49,47 @@ function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: Scoreboar
   }
 
   return (
-    <article className="rounded-lg border border-ink-800 bg-ink-900 p-4">
-      <header className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-xs tabular-nums text-ink-400">
-            {formatSessionDate(session.finished_at ?? session.created_at)}
-          </p>
-          <p className="mt-0.5 text-sm font-semibold text-ink-200">
+    <article
+      aria-label={`Partida de ${formatSessionDate(playedAt)}`}
+      className="rounded-lg border border-ink-800 bg-ink-900"
+    >
+      <header className="px-4 pt-4">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-400">
+          <time dateTime={playedAt} className="tabular-nums">
+            {formatSessionDate(playedAt)}
+          </time>
+          <span aria-hidden="true">·</span>
+          <span>
             {session.players.length} {session.players.length === 1 ? "jogador" : "jogadores"}
-          </p>
-
-          {session.source === "retroactive" && (
-            <Badge variant="victory" className="mt-1.5">
-              Retroativo
-            </Badge>
-          )}
+          </span>
+          {session.source === "retroactive" && <Badge variant="victory">Retroativo</Badge>}
         </div>
 
-        {canManage && (
-          <div className="flex shrink-0 items-center gap-1">
-            {confirmDelete ? (
+        <div className="mt-2 flex items-start justify-between gap-3">
+          {loser ? (
+            <p className="min-w-0 text-[15px] font-semibold leading-snug text-ink-200">
+              <span className="break-words text-danger">@{loser.player.username}</span> perdeu
+            </p>
+          ) : (
+            <p className="text-[15px] font-semibold leading-snug text-ink-200">Partida encerrada</p>
+          )}
+
+          <div className="shrink-0 text-right">
+            {session.loser_spent !== null ? (
               <>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  fullWidth={false}
-                  onClick={() => setConfirmDelete(false)}
-                  disabled={isDeleting}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="button"
-                  variant="danger"
-                  size="sm"
-                  fullWidth={false}
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? "Excluindo…" : "Confirmar?"}
-                </Button>
+                <p className="text-lg font-semibold leading-none tabular-nums text-ink-50">
+                  {formatBRL(session.loser_spent)}
+                </p>
+                <p className="mt-1 text-xs text-ink-400">Gasto do perdedor</p>
               </>
             ) : (
-              <>
-                <Button type="button" variant="ghost" size="sm" fullWidth={false} onClick={onEdit}>
-                  Editar
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  fullWidth={false}
-                  onClick={() => setConfirmDelete(true)}
-                >
-                  Excluir
-                </Button>
-              </>
+              <p className="text-xs text-ink-400">Gasto não informado</p>
             )}
           </div>
-        )}
+        </div>
       </header>
 
-      <div className="mt-3 flex flex-col">
+      <section aria-label="Placar dos jogadores" className="mt-3 border-t border-ink-800 px-3 py-1">
         {scores.map((score) => (
           <PlayerScoreCard
             key={score.player.id}
@@ -117,22 +97,51 @@ function ScoreboardGameCard({ session, canManage, onEdit, onDeleted }: Scoreboar
             isLoser={score.player.profile_id === session.loser_profile_id}
           />
         ))}
-      </div>
+      </section>
 
-      <div className="mt-2 flex items-center justify-between gap-3 border-t border-ink-800 pt-2.5">
-        <span className="text-xs text-ink-400">Gasto do perdedor</span>
-        <span
-          className={
-            session.loser_spent !== null
-              ? "font-display text-2xl leading-none tabular-nums text-victory"
-              : "text-xs text-ink-400"
-          }
-        >
-          {session.loser_spent !== null ? formatBRL(session.loser_spent) : "Não informado"}
-        </span>
-      </div>
+      {canManage && (
+        <footer className="mt-1 border-t border-ink-800 px-4 py-2">
+          {confirmDelete ? (
+            <div className="flex items-center justify-end gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                fullWidth={false}
+                onClick={() => setConfirmDelete(false)}
+                disabled={isDeleting}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                variant="danger"
+                size="sm"
+                fullWidth={false}
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Excluindo…" : "Confirmar?"}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-end gap-1">
+              <Button type="button" variant="ghost" size="sm" fullWidth={false} onClick={onEdit}>
+                Editar
+              </Button>
+              <Button type="button" variant="ghost" size="sm" fullWidth={false} onClick={() => setConfirmDelete(true)}>
+                Excluir
+              </Button>
+            </div>
+          )}
+        </footer>
+      )}
 
-      <ErrorMessage message={deleteError} />
+      {deleteError && (
+        <div className="px-4 pb-3">
+          <ErrorMessage message={deleteError} />
+        </div>
+      )}
     </article>
   );
 }
